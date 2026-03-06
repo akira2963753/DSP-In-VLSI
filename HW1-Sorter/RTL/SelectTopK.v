@@ -35,11 +35,25 @@ module SelectTopK(
     reg [1:0] Reg_cnt;
     reg [2:0] Pointer [0:3];
     reg cmp_pending;
+    reg Blk_In_Reg0, Blk_In_Reg1;
 
     Sort8 BitonicSorter(in0, in1, in2, in3, in4, in5, in6, in7,
+                        clk, rst_n,
                         Sort8_out[0], Sort8_out[1], Sort8_out[2], Sort8_out[3],
                         Sort8_out[4], Sort8_out[5], Sort8_out[6], Sort8_out[7]);
     
+
+    always @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
+            Blk_In_Reg0 <= 0;
+            Blk_In_Reg1 <= 0;
+        end
+        else begin
+            Blk_In_Reg0 <= Blk_In;
+            Blk_In_Reg1 <= Blk_In_Reg0;
+        end
+    end
+
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) state <= IDLE;
         else state <= next_state;
@@ -47,7 +61,7 @@ module SelectTopK(
 
     always @(*) begin
         case(state)
-            IDLE: next_state = (Blk_In)? LOAD : IDLE;
+            IDLE: next_state = (Blk_In_Reg1)? LOAD : IDLE;
             LOAD: next_state = (Reg_cnt == 2'd3)? IDLE : LOAD;
         endcase
     end
