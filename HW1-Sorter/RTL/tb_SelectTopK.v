@@ -10,7 +10,7 @@
 * Tool:         Vivado 2025.1
 * 
 ******************************************************************************/
-`define TEST_CASE 4
+`define TEST_CASE 1
 
 module tb_SelectTopK();
 
