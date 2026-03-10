@@ -23,9 +23,9 @@ module SelectTopK(
 
     integer i,j;
 
-    wire signed [8:0] Sort8_out [0:7];
-    reg  signed [8:0] Reg8_PingBuf [0:3][0:7];
-    reg  signed [8:0] Reg8_PongBuf [0:3][0:7];
+    wire signed [8:0] Sort8_out [0:3];
+    reg  signed [8:0] Reg8_PingBuf [0:3][0:3];
+    reg  signed [8:0] Reg8_PongBuf [0:3][0:3];
 
     reg signed [8:0] Group_out [0:3];
     reg signed [8:0] Winner_out [0:1];
@@ -37,10 +37,21 @@ module SelectTopK(
     reg cmp_pending;
     reg Blk_In_Reg0, Blk_In_Reg1;
 
-    Sort8 BitonicSorter(in0, in1, in2, in3, in4, in5, in6, in7,
-                        clk, rst_n,
-                        Sort8_out[0], Sort8_out[1], Sort8_out[2], Sort8_out[3],
-                        Sort8_out[4], Sort8_out[5], Sort8_out[6], Sort8_out[7]);
+    Sort8 BitonicSorter(
+        .in0(in0), 
+        .in1(in1), 
+        .in2(in2), 
+        .in3(in3),
+        .in4(in4), 
+        .in5(in5), 
+        .in6(in), 
+        .in7(in7),
+        .clk(clk),
+        .rst_n(rst_n),
+        .out0(Sort8_out[0]),
+        .out1(Sort8_out[1]),
+        .out2(Sort8_out[2]),
+        .out3(Sort8_out[3]));
     
 
     always @(posedge clk or negedge rst_n) begin
@@ -72,17 +83,17 @@ module SelectTopK(
     end
 
     always @(posedge clk or negedge rst_n) begin
-        if(!rst_n) for(i=0; i<4; i=i+1) for(j=0; j<8; j=j+1) Reg8_PingBuf[i][j] <= 0;
+        if(!rst_n) for(i=0; i<4; i=i+1) for(j=0; j<4; j=j+1) Reg8_PingBuf[i][j] <= 0;
         else if(next_state==LOAD||state==LOAD) begin
-            for(i=0; i<8; i=i+1) if(Reg_cnt!=2'd3) Reg8_PingBuf[Reg_cnt][i] <= Sort8_out[i];
+            for(i=0; i<4; i=i+1) if(Reg_cnt!=2'd3) Reg8_PingBuf[Reg_cnt][i] <= Sort8_out[i];
         end
     end
 
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) for(i=0; i<4; i=i+1) for(j=0; j<8; j=j+1) Reg8_PongBuf[i][j] <= 0;
         else if(state==LOAD && Reg_cnt == 2'd3) begin
-            for(i=0; i<3; i=i+1) for(j=0; j<8; j=j+1) Reg8_PongBuf[i][j] <= Reg8_PingBuf[i][j];
-            for(j=0; j<8; j=j+1) Reg8_PongBuf[3][j] <= Sort8_out[j];
+            for(i=0; i<3; i=i+1) for(j=0; j<4; j=j+1) Reg8_PongBuf[i][j] <= Reg8_PingBuf[i][j];
+            for(j=0; j<4; j=j+1) Reg8_PongBuf[3][j] <= Sort8_out[j];
         end
     end
 
