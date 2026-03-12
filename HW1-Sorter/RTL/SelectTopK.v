@@ -44,14 +44,18 @@ module SelectTopK(
         .in3(in3),
         .in4(in4), 
         .in5(in5), 
-        .in6(in), 
+        .in6(in6), 
         .in7(in7),
         .clk(clk),
         .rst_n(rst_n),
         .out0(Sort8_out[0]),
         .out1(Sort8_out[1]),
         .out2(Sort8_out[2]),
-        .out3(Sort8_out[3]));
+        .out3(Sort8_out[3]),
+        .out4(),
+        .out5(),
+        .out6(),
+        .out7());
     
 
     always @(posedge clk or negedge rst_n) begin

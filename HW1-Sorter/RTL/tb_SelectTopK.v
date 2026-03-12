@@ -45,7 +45,8 @@ module tb_SelectTopK();
         #20;
         @(negedge clk) rst_n = 0;
         @(negedge clk) rst_n = 1;
-        file = $fopen("D:/DSP-In-VLSI/HW1-Sorter/Verification/input.dat", "w");
+        //file = $fopen("D:/DSP-In-VLSI/HW1-Sorter/Verification/input.dat", "w");
+        file = $fopen("./input.dat", "w");
         if(file == 0) begin
             $display("ERROR: Cannot open file!");
             $finish;
@@ -77,5 +78,11 @@ module tb_SelectTopK();
             end
         end
     endtask
+
+    /*initial begin
+        $fsdbDumpfile("wave.fsdb");
+        $fsdbDumpvars(0, tb_SelectTopK);
+    end*/
+
 
 endmodule

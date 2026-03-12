@@ -3,44 +3,66 @@
 Report : area
 Design : SelectTopK_1
 Version: O-2018.06
-Date   : Sat Mar  7 13:44:46 2026
+Date   : Wed Mar 11 23:04:49 2026
 ****************************************
 
 Library(s) Used:
 
     slow (File: /home/B11130007/Desktop/DSP-In-VLSI/lib/slow.db)
 
-Number of ports:                          232
-Number of nets:                          4204
-Number of cells:                         3567
-Number of combinational cells:           2864
-Number of sequential cells:               702
+Number of ports:                         1120
+Number of nets:                          4772
+Number of cells:                         3722
+Number of combinational cells:           3282
+Number of sequential cells:               415
 Number of macros/black boxes:               0
-Number of buf/inv:                       1898
-Number of references:                     154
+Number of buf/inv:                       1804
+Number of references:                     144
 
-Combinational area:              13712.630515
-Buf/Inv area:                     6905.001701
-Noncombinational area:           10521.201626
+Combinational area:              16489.872210
+Buf/Inv area:                     6677.092891
+Noncombinational area:            7097.630507
 Macro/Black Box area:                0.000000
-Net Interconnect area:          377721.968658
+Net Interconnect area:          380288.595154
 
-Total cell area:                 24233.832141
-Total area:                     401955.800799
-
-Information: This design contains black box (unknown) components. (RPT-8)
+Total cell area:                 23587.502717
+Total area:                     403876.097870
 
 Hierarchical area distribution
 ------------------------------
 
                                   Global cell area            Local cell area
-                                  -------------------  ------------------------------ 
-Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
-                                  Total       Total    national    national    boxes   Design
---------------------------------  ----------  -------  ----------  ----------  ------  ---------
-SelectTopK_1                      24233.8321    100.0  13678.7617   8285.8608  0.0000  SelectTopK_1
-BitonicSorter                      2269.2096      9.4     33.8688   2235.3408  0.0000  Sort8
---------------------------------  ----------  -------  ----------  ----------  ------  ---------
-Total                                                  13712.6305  10521.2016  0.0000
+                                  -------------------  ----------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-  Black-
+                                  Total       Total    national    national   boxes   Design
+--------------------------------  ----------  -------  ----------  ---------  ------  ---------
+SelectTopK_1                      23587.5027    100.0   7521.6961  4323.9168  0.0000  SelectTopK_1
+BitonicSorter                     11741.8898     49.8     52.2144  2773.7137  0.0000  Sort8
+BitonicSorter/Stage1_0              395.1360      1.7    395.1360     0.0000  0.0000  CAS_0
+BitonicSorter/Stage1_1              410.6592      1.7    410.6592     0.0000  0.0000  CAS_23
+BitonicSorter/Stage1_2              387.3744      1.6    387.3744     0.0000  0.0000  CAS_22
+BitonicSorter/Stage1_3              378.2016      1.6    378.2016     0.0000  0.0000  CAS_21
+BitonicSorter/Stage2_0              430.4160      1.8    430.4160     0.0000  0.0000  CAS_20
+BitonicSorter/Stage2_1              383.8464      1.6    383.8464     0.0000  0.0000  CAS_19
+BitonicSorter/Stage2_2              450.8784      1.9    450.8784     0.0000  0.0000  CAS_18
+BitonicSorter/Stage2_3              397.2528      1.7    397.2528     0.0000  0.0000  CAS_17
+BitonicSorter/Stage3_0              376.7904      1.6    376.7904     0.0000  0.0000  CAS_16
+BitonicSorter/Stage3_1              345.7440      1.5    345.7440     0.0000  0.0000  CAS_15
+BitonicSorter/Stage3_2              366.2064      1.6    366.2064     0.0000  0.0000  CAS_14
+BitonicSorter/Stage3_3              376.7904      1.6    376.7904     0.0000  0.0000  CAS_13
+BitonicSorter/Stage4_0              377.4960      1.6    377.4960     0.0000  0.0000  CAS_12
+BitonicSorter/Stage4_1              364.0896      1.5    364.0896     0.0000  0.0000  CAS_11
+BitonicSorter/Stage4_2              371.8512      1.6    371.8512     0.0000  0.0000  CAS_10
+BitonicSorter/Stage4_3              340.8048      1.4    340.8048     0.0000  0.0000  CAS_9
+BitonicSorter/Stage5_0              424.7712      1.8    424.7712     0.0000  0.0000  CAS_8
+BitonicSorter/Stage5_1              451.5840      1.9    451.5840     0.0000  0.0000  CAS_7
+BitonicSorter/Stage5_2              216.6192      0.9    216.6192     0.0000  0.0000  CAS_6
+BitonicSorter/Stage5_3              216.6192      0.9    216.6192     0.0000  0.0000  CAS_5
+BitonicSorter/Stage6_0              532.7280      2.3    532.7280     0.0000  0.0000  CAS_4
+BitonicSorter/Stage6_1              492.5088      2.1    492.5088     0.0000  0.0000  CAS_3
+BitonicSorter/Stage6_2              213.7968      0.9    213.7968     0.0000  0.0000  CAS_2
+BitonicSorter/Stage6_3              213.7968      0.9    213.7968     0.0000  0.0000  CAS_1
+--------------------------------  ----------  -------  ----------  ---------  ------  ---------
+Total                                                  16489.8722  7097.6305  0.0000
 
 1
