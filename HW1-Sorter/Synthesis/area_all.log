@@ -3,7 +3,7 @@
 Report : area
 Design : SelectTopK_1
 Version: O-2018.06
-Date   : Wed Mar 11 23:04:49 2026
+Date   : Thu Mar 12 00:19:56 2026
 ****************************************
 
 Library(s) Used:
@@ -11,22 +11,22 @@ Library(s) Used:
     slow (File: /home/B11130007/Desktop/DSP-In-VLSI/lib/slow.db)
 
 Number of ports:                         1120
-Number of nets:                          4772
-Number of cells:                         3722
-Number of combinational cells:           3282
-Number of sequential cells:               415
+Number of nets:                          4631
+Number of cells:                         3565
+Number of combinational cells:           3197
+Number of sequential cells:               343
 Number of macros/black boxes:               0
-Number of buf/inv:                       1804
-Number of references:                     144
+Number of buf/inv:                       1706
+Number of references:                     129
 
-Combinational area:              16489.872210
-Buf/Inv area:                     6677.092891
-Noncombinational area:            7097.630507
+Combinational area:              14741.395447
+Buf/Inv area:                     5788.036901
+Noncombinational area:            5877.648118
 Macro/Black Box area:                0.000000
-Net Interconnect area:          380288.595154
+Net Interconnect area:          356955.132385
 
-Total cell area:                 23587.502717
-Total area:                     403876.097870
+Total cell area:                 20619.043565
+Total area:                     377574.175950
 
 Hierarchical area distribution
 ------------------------------
@@ -36,33 +36,33 @@ Hierarchical area distribution
 Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-  Black-
                                   Total       Total    national    national   boxes   Design
 --------------------------------  ----------  -------  ----------  ---------  ------  ---------
-SelectTopK_1                      23587.5027    100.0   7521.6961  4323.9168  0.0000  SelectTopK_1
-BitonicSorter                     11741.8898     49.8     52.2144  2773.7137  0.0000  Sort8
-BitonicSorter/Stage1_0              395.1360      1.7    395.1360     0.0000  0.0000  CAS_0
-BitonicSorter/Stage1_1              410.6592      1.7    410.6592     0.0000  0.0000  CAS_23
-BitonicSorter/Stage1_2              387.3744      1.6    387.3744     0.0000  0.0000  CAS_22
-BitonicSorter/Stage1_3              378.2016      1.6    378.2016     0.0000  0.0000  CAS_21
-BitonicSorter/Stage2_0              430.4160      1.8    430.4160     0.0000  0.0000  CAS_20
-BitonicSorter/Stage2_1              383.8464      1.6    383.8464     0.0000  0.0000  CAS_19
-BitonicSorter/Stage2_2              450.8784      1.9    450.8784     0.0000  0.0000  CAS_18
-BitonicSorter/Stage2_3              397.2528      1.7    397.2528     0.0000  0.0000  CAS_17
-BitonicSorter/Stage3_0              376.7904      1.6    376.7904     0.0000  0.0000  CAS_16
-BitonicSorter/Stage3_1              345.7440      1.5    345.7440     0.0000  0.0000  CAS_15
-BitonicSorter/Stage3_2              366.2064      1.6    366.2064     0.0000  0.0000  CAS_14
-BitonicSorter/Stage3_3              376.7904      1.6    376.7904     0.0000  0.0000  CAS_13
-BitonicSorter/Stage4_0              377.4960      1.6    377.4960     0.0000  0.0000  CAS_12
-BitonicSorter/Stage4_1              364.0896      1.5    364.0896     0.0000  0.0000  CAS_11
-BitonicSorter/Stage4_2              371.8512      1.6    371.8512     0.0000  0.0000  CAS_10
-BitonicSorter/Stage4_3              340.8048      1.4    340.8048     0.0000  0.0000  CAS_9
-BitonicSorter/Stage5_0              424.7712      1.8    424.7712     0.0000  0.0000  CAS_8
-BitonicSorter/Stage5_1              451.5840      1.9    451.5840     0.0000  0.0000  CAS_7
-BitonicSorter/Stage5_2              216.6192      0.9    216.6192     0.0000  0.0000  CAS_6
-BitonicSorter/Stage5_3              216.6192      0.9    216.6192     0.0000  0.0000  CAS_5
-BitonicSorter/Stage6_0              532.7280      2.3    532.7280     0.0000  0.0000  CAS_4
-BitonicSorter/Stage6_1              492.5088      2.1    492.5088     0.0000  0.0000  CAS_3
-BitonicSorter/Stage6_2              213.7968      0.9    213.7968     0.0000  0.0000  CAS_2
-BitonicSorter/Stage6_3              213.7968      0.9    213.7968     0.0000  0.0000  CAS_1
+SelectTopK_1                      20619.0436    100.0   5655.3841  3371.3569  0.0000  SelectTopK_1
+BitonicSorter                     11592.3026     56.2     42.3360  2506.2913  0.0000  Sort8
+BitonicSorter/Stage1_0              416.3040      2.0    416.3040     0.0000  0.0000  CAS_0
+BitonicSorter/Stage1_1              418.4208      2.0    418.4208     0.0000  0.0000  CAS_23
+BitonicSorter/Stage1_2              366.2064      1.8    366.2064     0.0000  0.0000  CAS_22
+BitonicSorter/Stage1_3              381.0240      1.8    381.0240     0.0000  0.0000  CAS_21
+BitonicSorter/Stage2_0              397.2528      1.9    397.2528     0.0000  0.0000  CAS_20
+BitonicSorter/Stage2_1              399.3696      1.9    399.3696     0.0000  0.0000  CAS_19
+BitonicSorter/Stage2_2              453.7008      2.2    453.7008     0.0000  0.0000  CAS_18
+BitonicSorter/Stage2_3              410.6592      2.0    410.6592     0.0000  0.0000  CAS_17
+BitonicSorter/Stage3_0              378.2016      1.8    378.2016     0.0000  0.0000  CAS_16
+BitonicSorter/Stage3_1              344.3328      1.7    344.3328     0.0000  0.0000  CAS_15
+BitonicSorter/Stage3_2              419.1264      2.0    419.1264     0.0000  0.0000  CAS_14
+BitonicSorter/Stage3_3              380.3184      1.8    380.3184     0.0000  0.0000  CAS_13
+BitonicSorter/Stage4_0              388.0800      1.9    388.0800     0.0000  0.0000  CAS_12
+BitonicSorter/Stage4_1              404.3088      2.0    404.3088     0.0000  0.0000  CAS_11
+BitonicSorter/Stage4_2              418.4208      2.0    418.4208     0.0000  0.0000  CAS_10
+BitonicSorter/Stage4_3              383.1408      1.9    383.1408     0.0000  0.0000  CAS_9
+BitonicSorter/Stage5_0              459.3456      2.2    459.3456     0.0000  0.0000  CAS_8
+BitonicSorter/Stage5_1              484.0416      2.3    484.0416     0.0000  0.0000  CAS_7
+BitonicSorter/Stage5_2              216.6192      1.1    216.6192     0.0000  0.0000  CAS_6
+BitonicSorter/Stage5_3              216.6192      1.1    216.6192     0.0000  0.0000  CAS_5
+BitonicSorter/Stage6_0              494.6256      2.4    494.6256     0.0000  0.0000  CAS_4
+BitonicSorter/Stage6_1              385.9632      1.9    385.9632     0.0000  0.0000  CAS_3
+BitonicSorter/Stage6_2              213.7968      1.0    213.7968     0.0000  0.0000  CAS_2
+BitonicSorter/Stage6_3              213.7968      1.0    213.7968     0.0000  0.0000  CAS_1
 --------------------------------  ----------  -------  ----------  ---------  ------  ---------
-Total                                                  16489.8722  7097.6305  0.0000
+Total                                                  14741.3954  5877.6481  0.0000
 
 1

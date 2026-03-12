@@ -6,15 +6,15 @@ Report : timing
         -max_paths 1
 Design : SelectTopK_1
 Version: O-2018.06
-Date   : Wed Mar 11 23:04:49 2026
+Date   : Thu Mar 12 00:19:56 2026
 ****************************************
 
 Operating Conditions: slow   Library: slow
 Wire Load Model Mode: top
 
-  Startpoint: BitonicSorter/s4_out_reg_reg[2][1]
+  Startpoint: BitonicSorter/s2_out_reg_reg[5][3]
               (rising edge-triggered flip-flop clocked by clk)
-  Endpoint: Reg8_PongBuf_reg[3][1][8]
+  Endpoint: BitonicSorter/s4_out_reg_reg[5][6]
             (rising edge-triggered flip-flop clocked by clk)
   Path Group: clk
   Path Type: max
@@ -27,47 +27,44 @@ Wire Load Model Mode: top
   --------------------------------------------------------------------------
   clock clk (rise edge)                                   0.00       0.00
   clock network delay (ideal)                             0.10       0.10
-  BitonicSorter/s4_out_reg_reg[2][1]/CK (DFFRHQX2)        0.00       0.10 r
-  BitonicSorter/s4_out_reg_reg[2][1]/Q (DFFRHQX2)         0.23       0.33 f
-  BitonicSorter/Stage5_0/in1[1] (CAS_8)                   0.00       0.33 f
-  BitonicSorter/Stage5_0/U40/Y (CLKINVX3)                 0.15       0.47 r
-  BitonicSorter/Stage5_0/U47/Y (OAI2B2X4)                 0.10       0.58 f
-  BitonicSorter/Stage5_0/U39/Y (AOI221X4)                 0.26       0.83 r
-  BitonicSorter/Stage5_0/U16/Y (OAI21X8)                  0.08       0.91 f
-  BitonicSorter/Stage5_0/U46/Y (AOI2BB2X4)                0.12       1.03 r
-  BitonicSorter/Stage5_0/U60/Y (OAI221X4)                 0.13       1.16 f
-  BitonicSorter/Stage5_0/U55/Y (XOR2X8)                   0.12       1.28 r
-  BitonicSorter/Stage5_0/U19/Y (CLKINVX20)                0.06       1.34 f
-  BitonicSorter/Stage5_0/U63/Y (CLKBUFX40)                0.13       1.47 f
-  BitonicSorter/Stage5_0/U20/Y (OAI22X4)                  0.15       1.61 r
-  BitonicSorter/Stage5_0/out0[2] (CAS_8)                  0.00       1.61 r
-  BitonicSorter/Stage6_0/in0[2] (CAS_4)                   0.00       1.61 r
-  BitonicSorter/Stage6_0/U29/Y (BUFX14)                   0.10       1.71 r
-  BitonicSorter/Stage6_0/U41/Y (NOR2BX8)                  0.12       1.83 r
-  BitonicSorter/Stage6_0/U46/Y (OAI22X4)                  0.10       1.93 f
-  BitonicSorter/Stage6_0/U75/Y (AOI221X4)                 0.23       2.17 r
-  BitonicSorter/Stage6_0/U20/Y (OAI21X4)                  0.10       2.26 f
-  BitonicSorter/Stage6_0/U78/Y (AOI2BB2X4)                0.12       2.39 r
-  BitonicSorter/Stage6_0/U77/Y (OAI221X4)                 0.20       2.59 f
-  BitonicSorter/Stage6_0/U43/Y (CLKXOR2X12)               0.20       2.79 r
-  BitonicSorter/Stage6_0/U38/Y (CLKINVX40)                0.09       2.88 f
-  BitonicSorter/Stage6_0/U5/Y (OAI22X4)                   0.16       3.04 r
-  BitonicSorter/Stage6_0/out1[8] (CAS_4)                  0.00       3.04 r
-  BitonicSorter/out1[8] (Sort8)                           0.00       3.04 r
-  U1516/Y (INVX10)                                        0.08       3.12 f
-  U1967/Y (OAI2B2XL)                                      0.27       3.39 r
-  Reg8_PongBuf_reg[3][1][8]/D (DFFRQXL)                   0.00       3.39 r
-  data arrival time                                                  3.39
+  BitonicSorter/s2_out_reg_reg[5][3]/CK (DFFRQX2)         0.00       0.10 r
+  BitonicSorter/s2_out_reg_reg[5][3]/Q (DFFRQX2)          0.40       0.50 f
+  BitonicSorter/Stage3_2/in1[3] (CAS_14)                  0.00       0.50 f
+  BitonicSorter/Stage3_2/U68/Y (INVX3)                    0.13       0.62 r
+  BitonicSorter/Stage3_2/U72/Y (OAI22X2)                  0.12       0.74 f
+  BitonicSorter/Stage3_2/U39/Y (AOI221X4)                 0.24       0.98 r
+  BitonicSorter/Stage3_2/U16/Y (OAI21X4)                  0.10       1.08 f
+  BitonicSorter/Stage3_2/U73/Y (AOI2BB2X4)                0.12       1.20 r
+  BitonicSorter/Stage3_2/U74/Y (OAI221X4)                 0.13       1.33 f
+  BitonicSorter/Stage3_2/U23/Y (XNOR2X4)                  0.16       1.49 r
+  BitonicSorter/Stage3_2/U44/Y (CLKBUFX40)                0.16       1.64 r
+  BitonicSorter/Stage3_2/U5/Y (OAI22X2)                   0.11       1.75 f
+  BitonicSorter/Stage3_2/out1[3] (CAS_14)                 0.00       1.75 f
+  BitonicSorter/Stage4_1/in1[3] (CAS_11)                  0.00       1.75 f
+  BitonicSorter/Stage4_1/U6/Y (BUFX4)                     0.13       1.88 f
+  BitonicSorter/Stage4_1/U7/Y (CLKBUFX2)                  0.20       2.08 f
+  BitonicSorter/Stage4_1/U33/Y (CLKINVX24)                0.07       2.15 r
+  BitonicSorter/Stage4_1/U38/Y (OAI22X4)                  0.08       2.24 f
+  BitonicSorter/Stage4_1/U52/Y (AOI221X4)                 0.26       2.49 r
+  BitonicSorter/Stage4_1/U18/Y (OAI21X8)                  0.08       2.57 f
+  BitonicSorter/Stage4_1/U79/Y (AOI2BB2X4)                0.12       2.69 r
+  BitonicSorter/Stage4_1/U78/Y (OAI221X4)                 0.13       2.81 f
+  BitonicSorter/Stage4_1/U23/Y (XNOR2X4)                  0.18       2.99 f
+  BitonicSorter/Stage4_1/U55/Y (BUFX14)                   0.16       3.16 f
+  BitonicSorter/Stage4_1/U81/Y (OAI22XL)                  0.29       3.45 r
+  BitonicSorter/Stage4_1/out1[6] (CAS_11)                 0.00       3.45 r
+  BitonicSorter/s4_out_reg_reg[5][6]/D (DFFRHQX1)         0.00       3.45 r
+  data arrival time                                                  3.45
 
   clock clk (rise edge)                                   4.00       4.00
   clock network delay (ideal)                             0.10       4.10
   clock uncertainty                                      -0.50       3.60
-  Reg8_PongBuf_reg[3][1][8]/CK (DFFRQXL)                  0.00       3.60 r
-  library setup time                                     -0.21       3.39
-  data required time                                                 3.39
+  BitonicSorter/s4_out_reg_reg[5][6]/CK (DFFRHQX1)        0.00       3.60 r
+  library setup time                                     -0.15       3.45
+  data required time                                                 3.45
   --------------------------------------------------------------------------
-  data required time                                                 3.39
-  data arrival time                                                 -3.39
+  data required time                                                 3.45
+  data arrival time                                                 -3.45
   --------------------------------------------------------------------------
   slack (MET)                                                        0.00
 

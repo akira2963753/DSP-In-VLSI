@@ -33,7 +33,6 @@ module SelectTopK(
     reg [1:0] Final_Winner_Group;
 
     reg [1:0] Reg_cnt;
-    reg [2:0] Pointer [0:3];
     reg cmp_pending;
     reg Blk_In_Reg0, Blk_In_Reg1;
 
@@ -99,12 +98,15 @@ module SelectTopK(
             for(i=0; i<3; i=i+1) for(j=0; j<4; j=j+1) Reg8_PongBuf[i][j] <= Reg8_PingBuf[i][j];
             for(j=0; j<4; j=j+1) Reg8_PongBuf[3][j] <= Sort8_out[j];
         end
-    end
-
-    always @(posedge clk or negedge rst_n) begin
-        if(!rst_n) for(i=0; i<4; i=i+1) Pointer[i] <= 0;
-        else if(state==LOAD && Reg_cnt == 2'd3) for(i=0; i<4; i=i+1) Pointer[i] <= 0;
-        else if(cmp_pending) Pointer[Final_Winner_Group] <= Pointer[Final_Winner_Group] + 1;
+        else if(cmp_pending) begin
+            for(i=0; i<4; i=i+1) begin  // Shifter 
+                if(Final_Winner_Group==i) begin
+                    for(j=0; j<2; j=j+1) begin
+                        Reg8_PongBuf[i][j] <= Reg8_PongBuf[i][j+1];
+                    end
+                end
+            end
+        end
     end
     
     always @(posedge clk or negedge rst_n) begin
@@ -121,10 +123,10 @@ module SelectTopK(
 
     always @(*) begin
         if(cmp_pending) begin
-            Group_out[0] = Reg8_PongBuf[0][Pointer[0]];
-            Group_out[1] = Reg8_PongBuf[1][Pointer[1]];
-            Group_out[2] = Reg8_PongBuf[2][Pointer[2]];
-            Group_out[3] = Reg8_PongBuf[3][Pointer[3]];
+            Group_out[0] = Reg8_PongBuf[0][0];
+            Group_out[1] = Reg8_PongBuf[1][0];
+            Group_out[2] = Reg8_PongBuf[2][0];
+            Group_out[3] = Reg8_PongBuf[3][0];
 
             // Comparator 1 
             if(Group_out[0] > Group_out[1]) begin
