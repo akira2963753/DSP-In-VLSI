@@ -93,7 +93,7 @@ module SelectTopK(
     end
 
     always @(posedge clk or negedge rst_n) begin
-        if(!rst_n) for(i=0; i<4; i=i+1) for(j=0; j<8; j=j+1) Reg8_PongBuf[i][j] <= 0;
+        if(!rst_n) for(i=0; i<4; i=i+1) for(j=0; j<4; j=j+1) Reg8_PongBuf[i][j] <= 0;
         else if(state==LOAD && Reg_cnt == 2'd3) begin
             for(i=0; i<3; i=i+1) for(j=0; j<4; j=j+1) Reg8_PongBuf[i][j] <= Reg8_PingBuf[i][j];
             for(j=0; j<4; j=j+1) Reg8_PongBuf[3][j] <= Sort8_out[j];
