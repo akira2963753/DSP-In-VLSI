@@ -1,4 +1,4 @@
-## DSP in VLSI @ NTU <ICDA5003>
+## DSP in VLSI at NTU (ICDA5003)
 
 | Lab | DSP IP | Area | Clock Frequency | Process |
 |-----|--------|------|-----------------|---------|
