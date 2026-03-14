@@ -1,10 +1,14 @@
+Information: Updating design information... (UID-85)
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
  
 ****************************************
 Report : power
         -analysis_effort low
-Design : SelectTopK_1
+Design : SelectTopK
 Version: O-2018.06
-Date   : Thu Mar 12 00:19:56 2026
+Date   : Sat Mar 14 00:50:46 2026
 ****************************************
 
 
@@ -18,7 +22,7 @@ Wire Load Model Mode: top
 
 Design        Wire Load Model            Library
 ------------------------------------------------
-SelectTopK_1           tsmc090_wl10      slow
+SelectTopK             tsmc090_wl10      slow
 
 
 Global Operating Voltage = 0.9  
@@ -30,12 +34,12 @@ Power-specific unit information :
     Leakage Power Units = 1pW
 
 
-  Cell Internal Power  =   1.3339 mW   (57%)
-  Net Switching Power  = 994.9656 uW   (43%)
+  Cell Internal Power  =   1.4357 mW   (60%)
+  Net Switching Power  = 937.9037 uW   (40%)
                          ---------
-Total Dynamic Power    =   2.3288 mW  (100%)
+Total Dynamic Power    =   2.3736 mW  (100%)
 
-Cell Leakage Power     =  93.8919 uW
+Cell Leakage Power     =  90.4654 uW
 
 
                  Internal         Switching           Leakage            Total
@@ -45,9 +49,9 @@ io_pad             0.0000            0.0000            0.0000            0.0000 
 memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
 black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
 clock_network      0.0000            0.0000            0.0000            0.0000  (   0.00%)
-register           1.0759        7.8614e-02        1.5883e+07            1.1704  (  48.31%)
+register           1.1483            0.1017        1.1333e+07            1.2613  (  51.19%)
 sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
-combinational      0.2580            0.9164        7.8009e+07            1.2523  (  51.69%)
+combinational      0.2874            0.8362        7.9133e+07            1.2027  (  48.81%)
 --------------------------------------------------------------------------------------------------
-Total              1.3339 mW         0.9950 mW     9.3892e+07 pW         2.4227 mW
+Total              1.4357 mW         0.9379 mW     9.0465e+07 pW         2.4640 mW
 1
