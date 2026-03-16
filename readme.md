@@ -1,6 +1,7 @@
 ## DSP in VLSI at NTU (ICDA5003)
 
-This is the course content for NTU-ICDA 2026 Spring **DSP In VLSI** Lab & Final Project.
+This is the course content for **NTU-ICDA 2026 Spring DSP In VLSI** Lab & Final Project, It implemented DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator and Sorter in TSMC 16nm.
+
 
 | Lab| DSP IP | Area | Clock Frequency | Power | Process |
 |:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|
