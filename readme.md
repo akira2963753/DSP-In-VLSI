@@ -6,7 +6,7 @@
 ## Development Environment
 - **Simulation Tools : Xilinx Vivado, Synopsys VCS & Verdi**
 - **Synthesis Tool : Synopsys DC Compiler**
-- **Hardware Algorithm Performance Analyze : Python**
+- **Hardware Algorithm Performance Analysis : Python**
 
 
 | Lab| DSP IP | Area | Clock Frequency | Power | Process |
