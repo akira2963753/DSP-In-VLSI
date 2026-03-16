@@ -1,7 +1,12 @@
 ## DSP in VLSI at NTU (ICDA5003)
 
-This is the course content for **NTU-ICDA 2026 Spring DSP In VLSI** Lab & Final Project.  
-It implemented DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator and Sorter in TSMC 16nm.
+**This is the course content for `NTU-ICDA 2026 Spring DSP In VLSI` Lab & Final Project.**  
+**It implemented DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator and Sorter in TSMC 16nm.**
+
+## Development Environment
+- **Simulation Tools : Xilinx Vivado, Synopsys VCS & Verdi**
+- **Synthesis Tool : Synopsys DC Compiler**
+- **Hardware Algorithm Performance Analyze : Python**
 
 
 | Lab| DSP IP | Area | Clock Frequency | Power | Process |
