@@ -12,5 +12,5 @@ This is the course content for NTU-ICDA 2026 Spring **DSP In VLSI** Lab & Final 
 |6| QRD |  um² |  MHz | mW| TSMC 90nm |
 
 | Final Project | Area | Clock Frequency | Power | Process | Ranking |
-|:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|:---:|
-|      |          |        |                   |         |           |     |
+|:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|
+|      |          |        |                   |         |           |
