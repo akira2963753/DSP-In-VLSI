@@ -10,13 +10,14 @@
 
 ## VCS Command
 ### Pre-Syn Simulation
+You need to change "Design" to your Module Name.
 ```
-vcs -full64 -debug_access+all -sverilog tb_Desing.v Design.v -o simv
+vcs -full64 -debug_access+all -sverilog tb_Design.v Design.v -o simv
 ```
 ### Post-Syn Simulation
 ```
 vcs -full64 -debug_access+all +neg_tchk -v tsmc090.v +sdfverbose -sdf \
-    max:SelectTopK:SelectTopK.sdf SelectTopK_syn.v tb_SelectTopK.v \
+    max:Desing:Design.sdf Design_syn.v tb_Design.v \
     -o simv_post
 ```
 
