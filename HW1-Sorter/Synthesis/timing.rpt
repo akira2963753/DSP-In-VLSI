@@ -1,0 +1,69 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : SelectTopK
+Version: O-2018.06
+Date   : Tue Mar 17 12:04:54 2026
+****************************************
+
+Operating Conditions: slow   Library: slow
+Wire Load Model Mode: top
+
+  Startpoint: Reg8_PongBuf_reg_0__0__1_
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: Reg8_PongBuf_reg_2__0__3_
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  SelectTopK         tsmc090_wl10          slow
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.10       0.10
+  Reg8_PongBuf_reg_0__0__1_/CK (DFFRHQX8)                 0.00       0.10 r
+  Reg8_PongBuf_reg_0__0__1_/Q (DFFRHQX8)                  0.19       0.29 r
+  U658/Y (INVX8)                                          0.06       0.35 f
+  U843/Y (OAI22X4)                                        0.12       0.47 r
+  U652/Y (NAND3X6)                                        0.11       0.57 f
+  U846/Y (NAND3X6)                                        0.07       0.64 r
+  U847/Y (NAND2X8)                                        0.05       0.69 f
+  U851/Y (AND2X8)                                         0.10       0.79 f
+  U501/Y (INVX8)                                          0.09       0.88 r
+  U877/Y (MXI2X8)                                         0.16       1.04 r
+  U900/Y (INVX10)                                         0.07       1.11 f
+  U906/Y (NAND2X2)                                        0.09       1.20 r
+  U491/Y (OR2X6)                                          0.10       1.30 r
+  U489/Y (CLKNAND2X8)                                     0.05       1.35 f
+  U907/Y (NAND2X6)                                        0.06       1.41 r
+  U908/Y (NAND3X8)                                        0.09       1.50 f
+  U909/Y (OR2X8)                                          0.12       1.63 f
+  U664/Y (NOR2X8)                                         0.10       1.73 r
+  U483/Y (NAND2X4)                                        0.12       1.85 f
+  U523/Y (INVX12)                                         0.13       1.98 r
+  U760/Y (NOR3X1)                                         0.11       2.09 f
+  U464/Y (AOI21X1)                                        0.21       2.30 r
+  U577/Y (OAI2BB1X1)                                      0.18       2.49 f
+  Reg8_PongBuf_reg_2__0__3_/D (DFFRHQX2)                  0.00       2.49 f
+  data arrival time                                                  2.49
+
+  clock clk (rise edge)                                   3.00       3.00
+  clock network delay (ideal)                             0.10       3.10
+  clock uncertainty                                      -0.50       2.60
+  Reg8_PongBuf_reg_2__0__3_/CK (DFFRHQX2)                 0.00       2.60 r
+  library setup time                                     -0.11       2.49
+  data required time                                                 2.49
+  --------------------------------------------------------------------------
+  data required time                                                 2.49
+  data arrival time                                                 -2.49
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
