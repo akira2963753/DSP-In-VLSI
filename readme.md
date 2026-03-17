@@ -8,6 +8,17 @@
 - **Synthesis Tool : Synopsys DC Compiler**
 - **Hardware Algorithm Performance Analysis : Python**
 
+## VCS Command
+### Pre-Syn Simulation
+```
+vcs -full64 -debug_access+all -sverilog tb_Desing.v Design.v -o simv
+```
+### Post-Syn Simulation
+```
+vcs -full64 -debug_access+all +neg_tchk -v tsmc090.v +sdfverbose -sdf \
+    max:SelectTopK:SelectTopK.sdf SelectTopK_syn.v tb_SelectTopK.v \
+    -o simv_post
+```
 
 | Lab| DSP IP | Area | Clock Frequency | Power | Process |
 |:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|
