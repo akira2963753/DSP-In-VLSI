@@ -11,6 +11,7 @@
 * 
 ******************************************************************************/
 `define TEST_CASE 4
+`timescale 1ns/1ps
 
 module tb_SelectTopK();
 
@@ -79,10 +80,10 @@ module tb_SelectTopK();
         end
     endtask
 
-    /*initial begin
+    initial begin
         $fsdbDumpfile("wave.fsdb");
         $fsdbDumpvars(0, tb_SelectTopK);
-    end*/
+    end
 
 
 endmodule
