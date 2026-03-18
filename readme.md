@@ -21,9 +21,9 @@ vcs -full64 -debug_access+all +neg_tchk -v tsmc090.v +sdfverbose -sdf \
     -o simv_post
 ```
 
-| Lab| DSP IP | Area | Clock Frequency | Power | Process |
-|:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|
-|1| [Sorter](./HW1-Sorter/HW1_Sorter.pdf) | 16942 um² | 333 MHz | 2.4640  mW | TSMC 90nm |
+| Lab| DSP IP | Area | Clock Frequency | Power | Process | Report |
+|:----:|:--------:|:------:|:-----------------:|:-------:|:---------:|:----:|
+|1| [Sorter](./HW1-Sorter) | 16942 um² | 333 MHz | 2.4640  mW | TSMC 90nm |[Report](./HW1-Sorter/HW1_Sorter.pdf)|
 |2| Interpolator |  um² |  MHz |   mW | TSMC 90nm |
 |3| CORDIC |  um² |  MHz | mW| TSMC 90nm |
 |4| Filter |  um² |  MHz | mW| TSMC 90nm |
