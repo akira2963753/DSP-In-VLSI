@@ -1,0 +1,246 @@
+\documentclass[12pt,a4paper]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[lining]{ebgaramond}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{pdflscape}
+\usepackage{float}
+\usepackage{enumitem}
+\graphicspath{{./}}
+
+% Page layout
+\geometry{
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Color definitions
+\definecolor{crimson}{RGB}{153, 0, 0}
+\definecolor{darkblue}{RGB}{0, 0, 153}
+
+% Hyperlink settings
+\hypersetup{
+    colorlinks=true,
+    linkcolor=crimson,
+    urlcolor=crimson,
+    citecolor=crimson
+}
+
+% Allow line breaks at slashes to prevent overfull hbox
+\tolerance=2000
+\emergencystretch=2em
+
+% Chapter/section title formatting
+\usepackage{titlesec}
+\titleformat{\chapter}{\normalfont\huge\bfseries}{}{0pt}{}[\vspace{0.3em}]
+\titlespacing*{\chapter}{0pt}{30pt}{20pt}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\pagestyle{plain}
+
+% ─────────────────────────────────────────────
+%  Cover Page
+% ─────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\fontsize{28}{34}\selectfont\bfseries DSP in VLSI\par}
+\vspace{0.6em}
+{\fontsize{20}{26}\selectfont\bfseries Homework 2\par}
+\vspace{0.4em}
+{\fontsize{16}{22}\selectfont\bfseries Digital Filter\par}
+
+\vspace{1.5cm}
+\textcolor{crimson}{\rule{0.6\linewidth}{1.2pt}}
+\vspace{1.5cm}
+
+{\large\bfseries Student ID}\par
+\vspace{0.4em}
+{\large M11407439}\par
+
+\vspace{0.8em}
+
+{\large\bfseries Name}\par
+\vspace{0.4em}
+{\large MING-HONG, LIN}\par
+
+\vspace{2cm}
+
+{\large\bfseries Development Environment}\par
+\vspace{0.8em}
+\begin{tabular}{rl}
+    \textbf{HDL}              & Verilog HDL \\[4pt]
+    \textbf{Simulation Tools} & Synopsys VCS and Verdi \\[4pt]
+    \textbf{Synthesis Tool}   & Synopsys DC Compiler \\[4pt]
+    \textbf{Process}          & TSMC 16nm (ADFP) \\[4pt]
+    \textbf{Verification}     & Python \\
+\end{tabular}
+
+\vfill
+
+\textcolor{crimson}{\rule{0.6\linewidth}{0.6pt}}\par
+\vspace{0.5em}
+{\small Due Date: 2026/04/08}
+
+\end{titlepage}
+
+% ─────────────────────────────────────────────
+%  Table of Contents
+% ─────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────
+%  Question 1
+% ─────────────────────────────────────────────
+\chapter{Question 1 — Filter Analysis}
+
+Please use Matlab/Python to draw the \textbf{impulse response} and
+\textbf{frequency response} (containing magnitude and phase) of the 25-tap
+sinc-based FIR filter. Use dB scale for magnitude and radian for phase versus
+normalized frequency. The x-axis must be marked with the correct label.
+\textbf{(20\%)}
+Please explain whether the filter is high-pass, band-pass or low-pass and why.
+\textbf{(5\%)}
+
+Draw the time-domain input and output waveforms after feeding 144 input
+samples $x[n] = \sin\!\left(-\tfrac{2\pi n}{128}\right) - \cos\!\left(\tfrac{2\pi n}{4}\right)$,
+$0 \le n \le 143$, and observe the filtering effect.
+\textbf{(20\%)}
+
+\section{Impulse Response}
+
+\section{Frequency Response}
+
+\section{Filter Type Explanation}
+
+\section{Time-Domain Input/Output Waveforms}
+
+% ─────────────────────────────────────────────
+%  Question 2
+% ─────────────────────────────────────────────
+\chapter{Question 2 — Quantization}
+
+Please use \textbf{direct form} to implement the 25-tap FIR filter. Decide the
+word-lengths of each data path after additions and multiplications so that the
+RMSE error between the fixed-point output and the floating-point output is less
+than $2^{-a}$. If $p = 0$, $a = 12$; otherwise $a = 11$, where
+$p = \mathrm{mod}(d_1, 2)$ and $d_1$ is the last digit of your student ID.
+
+To show how you determine the word-length, scan the quantization error versus
+word-lengths from 9 bits to 15 bits and mark the final word-length settings in
+the block diagram. \textbf{(20\%)}
+
+Draw the fixed-point output of the time-domain signal and compare to the
+floating-point output. \textbf{(10\% + 10\%)}
+Show the frequency response of the fixed-point direct-form FIR filter and
+compare the magnitude error in passband (within 3\,dB bandwidth), expressed in
+dB. \textbf{(10\% + 5\%)}
+
+\section{Word-Length Determination}
+
+\begin{enumerate}[label=\alph*.]
+    \item Output error versus input word-lengths.
+    \item Output error versus coefficient word-lengths (input word-length fixed to selected setting).
+    \item Output error versus word-lengths after multiplication (input and coefficient word-lengths at desired value).
+    \item Output error versus word-lengths after addition (fixed-point representations used for previous three signals).
+\end{enumerate}
+
+\section{Fixed-Point Output vs.\ Floating-Point Output}
+
+\section{Frequency Response of Fixed-Point Filter}
+
+\section{Magnitude Error in Passband}
+
+% ─────────────────────────────────────────────
+%  Question 3
+% ─────────────────────────────────────────────
+\chapter{Question 3 — Direct Form Implementation \& Synthesis}
+
+Please implement the \textbf{direct form} FIR filter using the word-lengths
+decided in Question~2. Add D flip-flops at input port $x[n]$ and output port
+$y[n]$. Find out the critical path, set a proper timing constraint to achieve
+the maximal operating frequency, and check the post-\textbf{SYNTHESIS}
+simulation results.
+
+Print out the behavior timing diagram for the first 20 and last 20 samples,
+and show the errors between hardware outputs and Matlab floating-point results.
+\textbf{The latency is not constrained. (10\% + 10\%)}
+
+Paste the timing report of the critical path, show the numbers of adders and
+multipliers, and list the timing constraint to achieve the highest operating
+frequency. \textbf{(5\% + 5\%)}
+
+Print out the post-\textbf{SYNTHESIS} timing diagram for the first 20 and last
+20 samples, and show the post-synthesis vs.\ Matlab floating-point errors.
+\textbf{(10\% + 10\%)}
+
+\section{Behavior Simulation Timing Diagram}
+
+\section{Hardware vs.\ Matlab Error}
+
+\section{Critical Path Report}
+
+\section{Timing Constraint \& Maximum Operating Frequency}
+
+\section{Post-Synthesis Timing Diagram}
+
+\section{Post-Synthesis vs.\ Matlab Error}
+
+% ─────────────────────────────────────────────
+%  Question 4
+% ─────────────────────────────────────────────
+\chapter{Question 4 — 2X Speedup via Parallel Processing}
+
+Achieve a 2X speedup by using 2-level parallel processing to accelerate
+throughput. Set the input/output style as \texttt{FilterIn0}/\texttt{FilterIn1}
+and \texttt{FilterOut0}/\texttt{FilterOut1}.
+\textbf{\textcolor{crimson}{Generate $y[0]$ to $y[143]$ within
+$T_{\mathrm{out}}/2$.}}
+Evaluate functionality correctness and successful speedup, and compare the
+resource utilization before and after speedup.
+
+Show that \textbf{\textcolor{crimson}{$y[0]$ to $y[143]$ can be generated
+within $T_{\mathrm{out}}/2$}} in the behavior timing diagram. Draw the block
+diagram and indicate your critical path. \textbf{(15\%)}
+Show your synthesis max delay report to verify your explanations. \textbf{(5\%)}
+
+Show the post-\textbf{SYNTHESIS} simulation results for the first 20 and last
+20 samples and indicate why throughput is doubled. \textbf{(10\%)}
+Show the errors of post-synthesis outputs vs.\ Matlab floating-point results.
+\textbf{(10\%)}
+Show the area (resources) before and after speedup from the synthesis report.
+\textbf{(10\%)}
+
+\section{Behavior Timing Diagram — $y[0]$ to $y[143]$ within $T_{\mathrm{out}}/2$}
+
+\section{Block Diagram \& Critical Path}
+
+\section{Synthesis Max Delay Report}
+
+\section{Post-Synthesis Simulation \& Throughput Explanation}
+
+\section{Post-Synthesis vs.\ Matlab Error}
+
+\section{Area Comparison Before \& After Speedup}
+
+\end{document}
