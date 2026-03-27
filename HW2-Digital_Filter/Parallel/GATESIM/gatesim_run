@@ -1,0 +1,2 @@
+vcs -full64 -debug_access+all -f file.f +neg_tchk +sdfverbose -sdf max:Digital_Filter_Parallel:Digital_Filter_Parallel.sdf -o simv_post
+./simv_post

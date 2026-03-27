@@ -1,0 +1,2 @@
+-sverilog ../RTL/Digital_Filter_Parallel.v
+-sverilog ../RTL/tb_Digital_Filter_Parallel.v

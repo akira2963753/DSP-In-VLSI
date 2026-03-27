@@ -1,0 +1,3 @@
+-sverilog ../SYN/Digital_Filter_syn.v
+-sverilog ../RTL/tb_Digital_Filter.v
+-v ./tsmc090.v

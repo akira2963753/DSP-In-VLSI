@@ -23,10 +23,10 @@
 
 % Page layout
 \geometry{
-    left=2.5cm,
-    right=2.5cm,
-    top=2.5cm,
-    bottom=2.5cm
+    left=1.8cm,
+    right=1.8cm,
+    top=2.2cm,
+    bottom=2.2cm
 }
 
 % Color definitions
@@ -41,6 +41,10 @@
     citecolor=crimson
 }
 
+% Make \textbf default to crimson color
+\let\oldtextbf\textbf
+\renewcommand{\textbf}[1]{\oldtextbf{\textcolor{crimson}{#1}}}
+
 % Allow line breaks at slashes to prevent overfull hbox
 \tolerance=2000
 \emergencystretch=2em
@@ -48,7 +52,7 @@
 % Chapter/section title formatting
 \usepackage{titlesec}
 \titleformat{\chapter}{\normalfont\huge\bfseries}{}{0pt}{}[\vspace{0.3em}]
-\titlespacing*{\chapter}{0pt}{30pt}{20pt}
+\titlespacing*{\chapter}{0pt}{0pt}{14pt}
 \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
 
@@ -109,10 +113,7 @@
 \tableofcontents
 \newpage
 
-% ─────────────────────────────────────────────
-%  Question 1
-% ─────────────────────────────────────────────
-\chapter{Question 1 — Filter Analysis}
+\chapter{Step 1 — Filter Analysis}
 
 Please use Matlab/Python to draw the \textbf{impulse response} and
 \textbf{frequency response} (containing magnitude and phase) of the 25-tap
@@ -122,23 +123,42 @@ normalized frequency. The x-axis must be marked with the correct label.
 Please explain whether the filter is high-pass, band-pass or low-pass and why.
 \textbf{(5\%)}
 
+\section{Impulse Response}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{image0.png}
+    \caption{Impulse Response Diagram}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+\section{Frequency Response and Filter Type}
+
+\textbf{This is a low-pass filter.} The filter coefficients are derived from the Sinc function, which corresponds to a rectangular frequency response (ideal low-pass filter) in the frequency domain. From the magnitude response, the passband is located at low frequencies ($\omega<0.141\pi$) with approximately 16 dB gain, and the stopband attenuates high-frequency components by 20 to 40 dB. The 3dB cutoff frequency is at $\omega=0.141\pi$, close to the theoretical value of$\pi/6$. The phase response is linear in the passband, consistent with a symmetric-coefficient FIR filter.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image1.png}
+    \caption{Frequency Response Diagram}
+    \label{fig:placeholder}
+\end{figure}
+
+\chapter{Step 2 - Input and output waveforms}
 Draw the time-domain input and output waveforms after feeding 144 input
 samples $x[n] = \sin\!\left(-\tfrac{2\pi n}{128}\right) - \cos\!\left(\tfrac{2\pi n}{4}\right)$,
 $0 \le n \le 143$, and observe the filtering effect.
 \textbf{(20\%)}
 
-\section{Impulse Response}
+\section{Sinc Function Implementation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{image2.png}
+    \caption{Time-Domain Input/Output Waveforms}
+    \label{fig:placeholder}
+\end{figure}
 
-\section{Frequency Response}
-
-\section{Filter Type Explanation}
-
-\section{Time-Domain Input/Output Waveforms}
-
-% ─────────────────────────────────────────────
-%  Question 2
-% ─────────────────────────────────────────────
-\chapter{Question 2 — Quantization}
+\chapter{Step 3 — Quantization}
 
 Please use \textbf{direct form} to implement the 25-tap FIR filter. Decide the
 word-lengths of each data path after additions and multiplications so that the
@@ -147,7 +167,7 @@ than $2^{-a}$. If $p = 0$, $a = 12$; otherwise $a = 11$, where
 $p = \mathrm{mod}(d_1, 2)$ and $d_1$ is the last digit of your student ID.
 
 To show how you determine the word-length, scan the quantization error versus
-word-lengths from 9 bits to 15 bits and mark the final word-length settings in
+word-lengths from 9 bits to 20 bits and mark the final word-length settings in
 the block diagram. \textbf{(20\%)}
 
 Draw the fixed-point output of the time-domain signal and compare to the
@@ -158,89 +178,235 @@ dB. \textbf{(10\% + 5\%)}
 
 \section{Word-Length Determination}
 
-\begin{enumerate}[label=\alph*.]
-    \item Output error versus input word-lengths.
-    \item Output error versus coefficient word-lengths (input word-length fixed to selected setting).
-    \item Output error versus word-lengths after multiplication (input and coefficient word-lengths at desired value).
-    \item Output error versus word-lengths after addition (fixed-point representations used for previous three signals).
-\end{enumerate}
+Based on the analysis of fractional word lengths ranging from \textbf{9 to 20 bits}, the minimum word length required to meet the output error threshold was identified. The experimental results indicate that \textbf{the input requires a 13-bit fractional length}. With the input fixed, \textbf{the coefficients require 15 bits}. Following these assignments, \textbf{the multiplication results require 17 bits}, and finally, \textbf{the accumulation requires 17 bits}.
 
-\section{Fixed-Point Output vs.\ Floating-Point Output}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.98\linewidth]{image4.png}
+    \caption{Scan the quantization error versus word-lengths from 9 bits to 20 bits}
+    \label{fig:placeholder}
+\end{figure}
 
-\section{Frequency Response of Fixed-Point Filter}
 
-\section{Magnitude Error in Passband}
+Furthermore, by incorporating the maximum integer word lengths for each stage, the complete fixed-point configurations are determined as follows:
 
-% ─────────────────────────────────────────────
-%  Question 3
-% ─────────────────────────────────────────────
-\chapter{Question 3 — Direct Form Implementation \& Synthesis}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Stage} & \textbf{Fractional Bits (F)} & \textbf{Total Word Length (W)} \\
+        \midrule
+        Input          & 13 bits & 16 bits \\
+        Coefficient    & 15 bits & 17 bits \\
+        Multiplication & 17 bits & 20 bits \\
+        Accumulation   & 17 bits & 21 bits \\
+        \bottomrule
+    \end{tabular}
+    \caption{Word-length configuration for each stage.}
+    \label{tab:wordlength}
+\end{table}
 
-Please implement the \textbf{direct form} FIR filter using the word-lengths
-decided in Question~2. Add D flip-flops at input port $x[n]$ and output port
-$y[n]$. Find out the critical path, set a proper timing constraint to achieve
-the maximal operating frequency, and check the post-\textbf{SYNTHESIS}
-simulation results.
 
-Print out the behavior timing diagram for the first 20 and last 20 samples,
-and show the errors between hardware outputs and Matlab floating-point results.
-\textbf{The latency is not constrained. (10\% + 10\%)}
+\section{Fixed-Point FIR Analysis}
 
-Paste the timing report of the critical path, show the numbers of adders and
-multipliers, and list the timing constraint to achieve the highest operating
-frequency. \textbf{(5\% + 5\%)}
+Based on the experimental results, the overall RMSE is $0.00045324$, which is
+below the error threshold $2^{-11} = 0.00048828$. The maximum error in the
+passband is $0.00054532$\,dB.
 
-Print out the post-\textbf{SYNTHESIS} timing diagram for the first 20 and last
-20 samples, and show the post-synthesis vs.\ Matlab floating-point errors.
-\textbf{(10\% + 10\%)}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image3.png}
+    \caption{Fixed-Point FIR Analysis}
+    \label{fig:placeholder}
+\end{figure}
 
-\section{Behavior Simulation Timing Diagram}
 
-\section{Hardware vs.\ Matlab Error}
+\chapter{Step 4 — Direct Form Implementation \& Synthesis}
 
-\section{Critical Path Report}
+Print out the behavior timing diagram for the first 20 samples and the last 20
+samples \textbf{(10\%)}. Show the errors of hardware outputs and Matlab
+floating-point results of direct form FIR filter output $y[n]$ for
+$0 \le n \le 143$ by figures.
+\textbf{The latency is not constrained. (10\%)}
 
-\section{Timing Constraint \& Maximum Operating Frequency}
+Paste the timing report about the critical path. Show the numbers of adders
+and multipliers in the critical path \textbf{(5\%)}. List your timing
+constraint to achieve the highest operating frequency \textbf{(5\%)}. Print out
+the \textbf{post-SYNTHESIS} timing diagram for the first 20 samples and the
+last 20 samples \textbf{(10\%)}. and show the errors of post-synthesis
+simulation outputs and Matlab floating-point results of direct-form FIR filter
+output $y[n]$ for $0 \le n \le 143$ \textbf{(10\%)}.
 
-\section{Post-Synthesis Timing Diagram}
+\section{Behavior Simulation and Error Analysis}
 
-\section{Post-Synthesis vs.\ Matlab Error}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image6.png}
+    \caption{First Timing Diagram (First 20)}
+    \label{fig:placeholder}
+\end{figure}
 
-% ─────────────────────────────────────────────
-%  Question 4
-% ─────────────────────────────────────────────
-\chapter{Question 4 — 2X Speedup via Parallel Processing}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image5.png}
+    \caption{Behavior Timing Diagram (Last 20)}
+    \label{fig:placeholder}
+\end{figure}
 
-Achieve a 2X speedup by using 2-level parallel processing to accelerate
-throughput. Set the input/output style as \texttt{FilterIn0}/\texttt{FilterIn1}
-and \texttt{FilterOut0}/\texttt{FilterOut1}.
-\textbf{\textcolor{crimson}{Generate $y[0]$ to $y[143]$ within
-$T_{\mathrm{out}}/2$.}}
-Evaluate functionality correctness and successful speedup, and compare the
-resource utilization before and after speedup.
+\newpage
 
-Show that \textbf{\textcolor{crimson}{$y[0]$ to $y[143]$ can be generated
-within $T_{\mathrm{out}}/2$}} in the behavior timing diagram. Draw the block
-diagram and indicate your critical path. \textbf{(15\%)}
-Show your synthesis max delay report to verify your explanations. \textbf{(5\%)}
+In the testbench, the filter output is written to \textbf{output.dat}. The
+output is then converted from Q4.17 fixed-point to FP32 using Python, and
+compared against the original floating-point results for error analysis. The
+resulting RMSE is only $0.00045324$, which is below the error threshold.
 
-Show the post-\textbf{SYNTHESIS} simulation results for the first 20 and last
-20 samples and indicate why throughput is doubled. \textbf{(10\%)}
-Show the errors of post-synthesis outputs vs.\ Matlab floating-point results.
-\textbf{(10\%)}
-Show the area (resources) before and after speedup from the synthesis report.
-\textbf{(10\%)}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image7.png}
+    \caption{The errors of hardware outputs and Python floating-point result}
+    \label{fig:placeholder}
+\end{figure}
 
-\section{Behavior Timing Diagram — $y[0]$ to $y[143]$ within $T_{\mathrm{out}}/2$}
+\newpage
 
-\section{Block Diagram \& Critical Path}
+\section{Critical Path Report and Timing 
+Constraint}
 
-\section{Synthesis Max Delay Report}
+The critical path of the direct-form FIR filter consists of \textbf{1 multiplier and 24 adders (Non-Optimization).} The maximum delay from the synthesis timing report is 3.40 ns and \textbf{the maximum operation frequency is 200MHz}.
 
-\section{Post-Synthesis Simulation \& Throughput Explanation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\linewidth]{image12.png}
+    \caption{Timing Report}
+    \label{fig:placeholder}
+\end{figure}
 
-\section{Post-Synthesis vs.\ Matlab Error}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Parameter} & \textbf{Value (ns)} \\
+        \midrule
+        Clock Period                  & 4   \\
+        Clock Uncertainty             & 0.5 \\
+        Clock Transition              & 0.1 \\
+        Clock Latency                 & 0.1 \\
+        Input / Output Maximum Delay  & 0.2 \\
+        Input Transition              & 0.2 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Timing constraint settings.}
+    \label{tab:timing-constraint}
+\end{table}
 
-\section{Area Comparison Before \& After Speedup}
+\newpage
+\section{Post-Synthesis Simulation and Error Analysis}
+Actually, the RMSE of Post-Synthesis is same as Behavior Simulation in Section 3.1 (only $0.00045324$).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image9.png}
+    \includegraphics[width=1\linewidth]{image10.png}
+    \caption{Post-Synthesis Timing Diagram (First 20 \& Last 20)}
+    \label{fig:placeholder}
+\end{figure} 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{image11.png}
+    \caption{The errors of Post-Synthesis hardware outputs and Python floating-point result}
+    \label{fig:placeholder}
+\end{figure}
+
+\chapter{Step 5 — 2X Speedup via Parallel Processing}
+
+Show that \textbf{$y[0]$ to $y[143]$ can be generated within
+$T_{\mathrm{out}}/2$} in the behavior timing diagram. Draw the block diagram
+and indicate your critical path \textbf{(15\%)}. Show your synthesis report of
+max delay to verify your explanations \textbf{(5\%)}.
+
+Show the \textbf{post-SYNTHESIS} simulation results for the first 20 samples
+and the last 20 samples and indicate why your throughput is doubled
+\textbf{(10\%)}. Show the errors of post-synthesis simulation outputs and Matlab
+floating-point results of direct-form FIR filter output $y[n]$ for
+$0 \le n \le 143$ \textbf{(10\%)}. Show the area (resources) before and after
+speedup from the synthesis report \textbf{(10\%)}.
+
+\section{Behavior Simulation}
+
+Experimental results demonstrate that after implementing the parallel processing architecture, the total time required to output the 144th sample $y[n]$ is reduced to \textbf{720 ns (from 85 ns to 805 ns)}. In contrast, the original architecture requires \textbf{1440 ns (from 85 ns to 1525 ns)} to complete the same operation. These data points confirm that the parallel processing architecture effectively halves the processing time, achieving a 2x speedup.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image14.png}
+    \caption{Original Behavior Simulation}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image13.png}
+    \caption{2X Speedup Behavior Simulation}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+\section{Critical Path Analysis \& Timing Report}
+
+The design implements a pipeline stage at 5-tap intervals. Consequently, \textbf{the critical path delay consists of 1 multiplier and 4 adders}, significantly reducing the logic depth compared to the non-pipelined baseline.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{Filter.png}
+    \caption{Block Diagram of 2X Speedup Filter Critical Path}
+    \label{fig:placeholder}
+\end{figure}
+
+The timing report validates that the critical path is strictly constrained between the successive launch register (PIPE\_STAGE1\_1) and capture register (PIPE\_STAGE1\_2). The total combinational delay is measured at 3.50ns, which accounts for the logic depth of one multiplier and four adders and the timing constraint settings are the same as in Section 4.2.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{image15.png}
+    \caption{Timing Report of 2X Speedup}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+\section{Post-Synthesis Simulation and Error Analysis}
+Actually, the RMSE of Post-Synthesis is alos same as Behavior Simulation in Section 3.1 (only $0.00045324$).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image16.png}
+    \includegraphics[width=0.9\linewidth]{image17.png}
+    \caption{Post-Synthesis Timing Diagram (First 20 \& Last 20)}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{image18.png}
+    \caption{The errors of Post-Synthesis hardware outputs and Python floating-point result}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+\section{Resources Comparison}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Design} & \textbf{Total Area} & \textbf{Area Overhead} \\
+        \midrule
+        Original (1$\times$)              & 53{,}504  & ---          \\
+        Two-Level Parallel (2$\times$)    & 102{,}624 & 1.92$\times$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Area comparison before and after 2X speedup.}
+    \label{tab:area-comparison}
+\end{table}
 
 \end{document}
