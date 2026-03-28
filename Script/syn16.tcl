@@ -103,5 +103,7 @@ write -format verilog  -hierarchy -output "./Netlist/${DESIGN}_syn.v"
 write_sdf -version 3.0 -context verilog ./Netlist/${DESIGN}_syn.sdf
 write_sdc ./Netlist/${DESIGN}_syn.sdc -version 1.8
 
+sh sed -i {6i \`timescale 1ns/1ps} ./Netlist/${DESIGN}_syn.v
+
 report_timing
 report_area
