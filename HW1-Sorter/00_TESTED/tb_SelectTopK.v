@@ -9,9 +9,9 @@
 * Tool:         Vivado
 * 
 *****************************************************************************/
-
-`define TEST_CASE 4
 `timescale 1ns/1ps
+`define TEST_CASE 4
+`define SRC_PATH "../00_TESTED/"
 
 module tb_SelectTopK();
 
@@ -46,7 +46,7 @@ module tb_SelectTopK();
         #20;
         @(negedge clk) rst_n = 0;
         @(negedge clk) rst_n = 1;
-        file = $fopen("D:/DSP-In-VLSI/HW1-Sorter/Verification/input.dat", "w");
+        file = $fopen({`SRC_PATH, "input.dat"}, "w");
         //file = $fopen("./input.dat", "w");
         if(file == 0) begin
             $display("ERROR: Cannot open file!");

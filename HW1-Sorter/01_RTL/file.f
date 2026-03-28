@@ -1,0 +1,3 @@
+-sverilog ./SelectTopK.v
+-sverilog ./Sort8.v
+-sverilog ../00_TESTED/tb_SelectTopK.v

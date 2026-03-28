@@ -1,10 +1,11 @@
-set toplevel SelectTopK 
-set filelist {../RTL/SelectTopK.v ../RTL/Sort8.v}
+set toplevel SelectTopK
+# set filelist {../RTL/}
 set sh_continue_on_error false
 set compile_preserve_subdesign_interfaces true
 define_design_lib work -path work
 
-analyze -f verilog $filelist
+analyze -f sverilog -vcs "-f file.f"
+# analyze -f verilog $filelist
 elaborate $toplevel
 
 set filename [format "%s%s" $toplevel "_raw.ddc"]
@@ -14,7 +15,7 @@ link
 check_design
 
 # Set the clock period
-set period 3
+set period 4
 # set io_delay [expr {$period * 0.6}]
 set io_delay 0.5
 
@@ -70,7 +71,7 @@ write -format ddc -hierarchy -output $filename
 set filename [format "%s%s" $toplevel ".sdf"]
 write_sdf -version 2.1 -load_delay net $filename
 
-set filename [format "%s%s" $toplevel ".syn.v"]
+set filename [format "%s%s" $toplevel "_syn.v"]
 write -format verilog -hierarchy -output $filename
 
 set filename [format "%s%s" $toplevel ".sdc"]
@@ -86,6 +87,5 @@ remove_design -all
 file delete -force default.svf
 file delete -force filenames.log
 file delete -force command.log
-
 
 
