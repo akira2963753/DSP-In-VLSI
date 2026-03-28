@@ -34,7 +34,7 @@ vcs -full64 -debug_access+all -R +v2k -f file.f
 dc_shell -f syn16.tcl
 ```
 
-> Shared synthesis scripts for all labs: [Script/](./Script/) (`syn16.tcl`, `syn90.tcl`, `syn.sdc`)
+> Shared synthesis scripts for all labs: [Script](./Script/) (`syn16.tcl`, `syn90.tcl`, `syn.sdc`)
 
 ### 03\_GATESIM — Gate-Level Simulation
 ```bash
