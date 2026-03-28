@@ -11,11 +11,12 @@
 ******************************************************************************/
 
 `timescale 1ns/1ps
-
 `define X_WIDTH     16    // FilterIn Width
 `define Y_WIDTH     21    // FilterOut Width
 `define X_NUM       144
 `define X_NUM_P     `X_NUM/2
+`define CYCLE       1
+`define SRC_PATH    "../00_TESTED/src/"
 
 module tb_Digital_Filter_Parallel;
 
@@ -37,8 +38,8 @@ module tb_Digital_Filter_Parallel;
     reg [7:0] OUTPUT_CNT0;
     reg [7:0] OUTPUT_CNT1;
 
-    initial $readmemb("../RTL/src/input.dat",IN_TEMP);
-    always #5 clk = ~clk;
+    initial $readmemb({`SRC_PATH, "input.dat"},IN_TEMP);
+    always #(`CYCLE/2) clk = ~clk;
 
     initial begin
         // Reset ALL
@@ -78,7 +79,7 @@ module tb_Digital_Filter_Parallel;
     end
 
     initial begin
-        output_file = $fopen("../RTL/src/output.dat", "w");
+        output_file = $fopen({`SRC_PATH, "output.dat"}, "w");
         wait(ValidOut) begin
             for(j=0; j<`X_NUM_P; j=j+1) begin
                 @(negedge clk);

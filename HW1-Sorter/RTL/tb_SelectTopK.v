@@ -1,15 +1,15 @@
-
-/******************************************************************************
-* Copyright (C) 2026 Marco 
+/*****************************************************************************
+* Copyright (C) 2026 Marco
 *
 * File Name:    tb_SelectTopK.v
 * Project:      [HW1] 2026 Spring DSP In VLSI @NTU <ICDA5003>
 * Module:       tb_SelectTopK
-* Author:       Marco <harry2963753@gmail.com>
+* Author:       Marco
 * Student ID:   M11407439
-* Tool:         Vivado 2025.1
+* Tool:         Vivado
 * 
-******************************************************************************/
+*****************************************************************************/
+
 `define TEST_CASE 4
 `timescale 1ns/1ps
 

@@ -1,0 +1,2 @@
+-sverilog ./Digital_Filter.v
+-sverilog ../00_TESTED/tb_Digital_Filter.v

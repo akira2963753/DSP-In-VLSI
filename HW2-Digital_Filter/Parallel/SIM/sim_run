@@ -1,2 +1,0 @@
-vcs -full64 -debug_access+all -f file.f -o simv
-./simv

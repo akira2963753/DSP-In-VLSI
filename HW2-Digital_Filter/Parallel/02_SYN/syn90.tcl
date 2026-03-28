@@ -1,4 +1,4 @@
-set toplevel Digital_Filter_Parallel 
+set toplevel Digital_Filter_Parallel
 # set filelist {../RTL/}
 set sh_continue_on_error false
 set compile_preserve_subdesign_interfaces true
@@ -17,7 +17,7 @@ check_design
 # Set the clock period
 set period 4
 # set io_delay [expr {$period * 0.6}]
-set io_delay 0.2
+set io_delay 0.5
 
 set_operating_conditions -min fast  -max slow
 set_wire_load_model -name tsmc090_wl10 -library slow
@@ -26,7 +26,7 @@ create_clock -name clk -period $period  [get_ports clk]
 # set_ideal_network         [get_ports clk]
 # set_ideal_network         [get_ports rst_n]
 set_dont_touch_network                  [get_clocks clk]
-set_fix_hold                            [get_clocks clk]
+# set_fix_hold                            [get_clocks clk]
 
 set_clock_uncertainty       0.5    [get_clocks clk]
 set_clock_latency -source   0      [get_clocks clk]

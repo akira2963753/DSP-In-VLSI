@@ -14,9 +14,9 @@ alias h history
 ############################################
 # set libraries
 ############################################
-set search_path    "/share1/tech/ADFP/Executable_Package/Collaterals/IP/stdcell/N16ADFP_StdCell/CCS/ \
-                    /share1/tech/ADFP/Executable_Package/Collaterals/IP/stdio/N16ADFP_StdIO/NLDM/ \
-                    /share1/tech/ADFP/Executable_Package/Collaterals/IP/sram/N16ADFP_SRAM/NLDM/ \
+set search_path    "/usr/cad/ADFP/Executable_Package/Collaterals/IP/stdcell/N16ADFP_StdCell/CCS/ \
+                    /usr/cad/ADFP/Executable_Package/Collaterals/IP/stdio/N16ADFP_StdIO/NLDM/ \
+                    /usr/cad/ADFP/Executable_Package/Collaterals/IP/sram/N16ADFP_SRAM/NLDM/ \
                     $search_path .\
                     "
 
@@ -50,9 +50,9 @@ sh mkdir -p Report
 ############################################
 # import design
 ############################################
-set DESIGN "ADDER"
+set DESIGN "Digital_Filter_Parallel"
 
-analyze -format verilog "../01_RTL/ADDER.v"
+analyze -f sverilog -vcs "-f file.f"
 elaborate $DESIGN
 link
 current_design $DESIGN

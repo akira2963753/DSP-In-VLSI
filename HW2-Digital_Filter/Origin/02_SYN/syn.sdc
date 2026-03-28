@@ -1,7 +1,7 @@
 ############################################
 # set Clock
 ############################################
-set cycle 20.0
+set cycle 1.0
 
 create_clock -period $cycle -name clk   [get_ports clk]
 set_dont_touch_network                  [get_clocks clk]

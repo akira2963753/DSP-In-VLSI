@@ -9,11 +9,13 @@
 * Tool:         VCS & Verdi
 * 
 ******************************************************************************/
+`timescale 1ns/1ps
 `define X_WIDTH     16    // FilterIn Width
 `define Y_WIDTH     21    // FilterOut Width
 `define X_NUM       144
+`define CYCLE       1
+`define SRC_PATH    "../00_TESTED/src/"
 
-`timescale 1ns/1ps
 module tb_Digital_Filter();
 
     reg clk;
@@ -29,9 +31,9 @@ module tb_Digital_Filter();
     Digital_Filter DUT(.*);
 
     reg signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
-    initial $readmemb("../RTL/src/input.dat",IN_TEMP);
+    initial $readmemb({`SRC_PATH ,"input.dat"},IN_TEMP);
 
-    always #5 clk = ~clk;
+    always #(`CYCLE/2) clk = ~clk;
 
     initial begin
         // Reset ALL
@@ -69,7 +71,7 @@ module tb_Digital_Filter();
     end
 
     initial begin
-        output_file = $fopen("../RTL/src/output.dat", "w");
+        output_file = $fopen({`SRC_PATH, "output.dat"}, "w");
         wait(ValidOut) begin
             for(j=0; j<`X_NUM; j=j+1) begin
                 @(negedge clk);
