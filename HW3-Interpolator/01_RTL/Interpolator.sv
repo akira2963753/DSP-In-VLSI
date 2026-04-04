@@ -14,54 +14,49 @@
 `include "define.vh"
 
 import BF16_PKG::*;
+typedef enum logic {IDLE, PROCESSING} STATETYPE;
 
 module Interpolator (
     input   clk,
     input   rst_n,
     input   IntpIn_valid,
-    input   [`IO_WIDTH-1:0] IntpIn,
+    input   [`IO_WIDTH-1:0] IntpIn_Real,
+    input   [`IO_WIDTH-1:0] IntpIn_Imag,
     input   [`MU_WIDTH-1:0] Mu,
-    output  logic [`IO_WIDTH-1:0]   IntpOut,
+    output  logic [`IO_WIDTH-1:0] IntpOut_Real,
+    output  logic [`IO_WIDTH-1:0] IntpOut_Imag,
     output  logic IntpOut_valid
 );
     // State Definition
-    typedef enum logic {IDLE, PROCESSING} STATETYPE;
     STATETYPE state, next_state;
 
     logic [4:0] cnt;
     logic [3:0] Sample_Pulse;
     logic pending;
     logic [`MU_WIDTH-1:0] Mu_Reg;
+    logic [`IO_WIDTH-1:0] Real_Out, Imag_Out;
 
-    // Reg[3] = X(m-1), Reg[2] = X(m), Reg[1] = X(m+1), Reg[0] = X(m+2)
-    logic [`IO_WIDTH-1:0] IntpIn_Reg [0:`NUM-1];
-    logic [`IO_WIDTH-1:0] IntpIn_TEMP;
+    Common_Logic Real_Part(
+        .clk(clk),
+        .rst_n(rst_n),
+        .Sample_Pulse(Sample_Pulse),
+        .state(state),
+        .IntpIn(IntpIn_Real),
+        .Mu_Reg(Mu_Reg),
+        .IntpOut(Real_Out));
 
-    logic [`IO_WIDTH-1:0] Shared;  // 0.5 * [X(m+2) + X(m-1)]
-    logic [`IO_WIDTH-1:0] XM1_0_5; // 0.5 * X(m+1)
-    logic [`IO_WIDTH-1:0] XM1_1_5; // 1.5 * X(m+1)
-    logic [`IO_WIDTH-1:0] XM_0_5;  // 0.5 * X(m)
-    logic [`IO_WIDTH-1:0] V2, V1, V0;
-    logic [`IO_WIDTH-1:0] uV2;
-    logic [`IO_WIDTH-1:0] uV2_V1;
-    logic [`IO_WIDTH-1:0] uuV2_uV1;
-    logic [`IO_WIDTH-1:0] uu_V2_uV1_V0;
+    Common_Logic Imag_Part(
+        .clk(clk),
+        .rst_n(rst_n),
+        .Sample_Pulse(Sample_Pulse),
+        .state(state),
+        .IntpIn(IntpIn_Imag),
+        .Mu_Reg(Mu_Reg),
+        .IntpOut(Imag_Out));
 
     always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin
-            for(int i=0; i<`NUM; i++) IntpIn_Reg[i] <= 0;
-            Mu_Reg <= 0;
-        end
-        else begin
-            if(Sample_Pulse==4'd7) IntpIn_TEMP <= IntpIn;
-            if(Sample_Pulse==4'd8) begin
-                for(int i=0; i<`NUM; i++) begin   
-                    if(i==0) IntpIn_Reg[i] <= IntpIn_TEMP;
-                    else IntpIn_Reg[i] <= IntpIn_Reg[i-1];
-                end
-            end
-            Mu_Reg <= Mu;
-        end
+        if(!rst_n) Mu_Reg <= 0;
+        else Mu_Reg <= Mu;
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
@@ -89,6 +84,69 @@ module Interpolator (
         if(!rst_n) Sample_Pulse <= 0;  
         else if(IntpIn_valid) Sample_Pulse <= (Sample_Pulse==4'd8)? 1 : Sample_Pulse + 1;
         else Sample_Pulse <= 0;
+    end
+
+    always_ff @(posedge clk or negedge rst_n) begin 
+        if(!rst_n) pending <= 0;
+        else pending <= (state==PROCESSING);
+    end
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
+            IntpOut_Real <= 0;
+            IntpOut_Imag <= 0;
+            IntpOut_valid <= 0;
+        end
+        else if(pending && state==PROCESSING) begin
+            IntpOut_Real <= Real_Out;
+            IntpOut_Imag <= Imag_Out;
+            IntpOut_valid <= 1;
+        end
+        else begin
+            IntpOut_Real <= 0;
+            IntpOut_Imag <= 0;
+            IntpOut_valid <= 0;
+        end
+    end
+
+endmodule
+
+module Common_Logic(
+    input   clk,
+    input   rst_n,
+    input   [3:0] Sample_Pulse,
+    input   STATETYPE state,
+    input   [`MU_WIDTH-1:0] Mu_Reg,
+    input   [`IO_WIDTH-1:0] IntpIn,
+    output  logic [`IO_WIDTH-1:0] IntpOut);
+
+    // Reg[3] = X(m-1), Reg[2] = X(m), Reg[1] = X(m+1), Reg[0] = X(m+2)
+    logic [`IO_WIDTH-1:0] IntpIn_Reg [0:`NUM-1];
+    logic [`IO_WIDTH-1:0] IntpIn_TEMP;
+
+    logic [`IO_WIDTH-1:0] Shared;  // 0.5 * [X(m+2) + X(m-1)]
+    logic [`IO_WIDTH-1:0] XM1_0_5; // 0.5 * X(m+1)
+    logic [`IO_WIDTH-1:0] XM1_1_5; // 1.5 * X(m+1)
+    logic [`IO_WIDTH-1:0] XM_0_5;  // 0.5 * X(m)
+    logic [`IO_WIDTH-1:0] V2, V1, V0;
+    logic [`IO_WIDTH-1:0] uV2;
+    logic [`IO_WIDTH-1:0] uV2_V1;
+    logic [`IO_WIDTH-1:0] uuV2_uV1;
+    logic [`IO_WIDTH-1:0] uu_V2_uV1_V0;
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
+            for(int i=0; i<`NUM; i++) IntpIn_Reg[i] <= 0;
+        end
+        else begin
+            if(Sample_Pulse==4'd7) IntpIn_TEMP <= IntpIn;
+            if(Sample_Pulse==4'd8) begin
+                for(int i=0; i<`NUM; i++) begin   
+                    if(i==0) IntpIn_Reg[i] <= IntpIn_TEMP;
+                    else IntpIn_Reg[i] <= IntpIn_Reg[i-1];
+                end
+            end
+        end
     end
 
     always_comb begin
@@ -129,26 +187,7 @@ module Interpolator (
             uuV2_uV1 = 0;
             uu_V2_uV1_V0 = 0;
         end
-    end
-
-    always_ff @(posedge clk or negedge rst_n) begin 
-        if(!rst_n) pending <= 0;
-        else pending <= (state==PROCESSING);
-    end
-
-    always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin
-            IntpOut <= 0;
-            IntpOut_valid <= 0;
-        end
-        else if(pending && state==PROCESSING) begin
-            IntpOut <= uu_V2_uV1_V0;
-            IntpOut_valid <= 1;
-        end
-        else begin
-            IntpOut <= 0;
-            IntpOut_valid <= 0;
-        end
+        IntpOut = uu_V2_uV1_V0;
     end
 
 endmodule

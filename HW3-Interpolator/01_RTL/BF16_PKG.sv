@@ -1,9 +1,21 @@
+/******************************************************************************
+* Copyright (C) 2026 Marco
+*
+* File Name:    BF16_PKG.sv
+* Project:      [HW3] 2026 Spring DSP In VLSI @NTU <ICDA5003>
+* Module:       BF16_PKG
+* Author:       Marco <harry2963753@gmail.com>
+* Student ID:   M11407439
+* Tool:         VCS & Verdi
+* 
+******************************************************************************/
 `include "define.vh"
 `timescale 1ns/1ps
 
+// Function 記得要使用 Autoamatic，才能被正確合成
 package BF16_PKG;
     // Leading One Detector: 回傳需左移幾位才能讓 implicit 1 回到 bit7
-    function [2:0] LOD;
+    function automatic [2:0] LOD;
         input [`MIN_WIDTH:0] val; // 8-bit: Result_add[MIN_WIDTH:0]
         begin
             casez(val)
@@ -20,7 +32,7 @@ package BF16_PKG;
     endfunction
 
     // BF16 Addition Function
-    function [`IO_WIDTH-1:0] BF16_ADD;
+    function automatic [`IO_WIDTH-1:0] BF16_ADD;
         input [`IO_WIDTH-1:0] A, B;
 
         logic A_sign, B_sign;
@@ -96,7 +108,7 @@ package BF16_PKG;
     endfunction
 
     // BF16 Multiplication Function
-    function [`IO_WIDTH-1:0] BF16_MUL;
+    function automatic [`IO_WIDTH-1:0] BF16_MUL;
         input [`IO_WIDTH-1:0] A, B;
 
         logic A_sign, B_sign;
@@ -140,8 +152,8 @@ package BF16_PKG;
         end
     endfunction
 
-    /* 這裡不選擇單純採用 LOD 因為出來是 One-Hot Code，還是要用 priority encoder 
-    function [`MIN_WIDTH-1:0] LOD
+    /* 這裡不選擇單純採用 LOD 因為出來是 One-Hot Code，最終還是要用 priority encoder 
+    function automatic [`MIN_WIDTH-1:0] LOD
         input [`MIN_WIDTH-1:0] In;
         logic [`MIN_WIDTH-1:1] MUX_TEMP;
         begin

@@ -18,22 +18,29 @@ module TESTED();
     logic   clk;
     logic   rst_n;
     logic   IntpIn_valid;
-    logic   [`IO_WIDTH-1:0] IntpIn;
+    logic   [`IO_WIDTH-1:0] IntpIn_Real;
+    logic   [`IO_WIDTH-1:0] IntpIn_Imag;
     logic   [`MU_WIDTH-1:0] Mu;
-    wire    [`IO_WIDTH-1:0] IntpOut;
+    wire    [`IO_WIDTH-1:0] IntpOut_Real;
+    wire    [`IO_WIDTH-1:0] IntpOut_Imag;
     wire    IntpOut_valid;
     
     Interpolator DUT (.*);
 
-    logic   [`IO_WIDTH-1:0] IntpIn_TEMP [0:`TESTCASE-1];
     logic   [`MU_WIDTH-1:0] Mu_TEMP [0:`MU_NUM-1];
-    logic   [`IO_WIDTH-1:0] IntpOut_TEMP [0:`TESTCASE*`MU_NUM-1];
-    logic   [`IO_WIDTH-1:0] IntpOut_GOLDEN [0:`TESTCASE*`MU_NUM-1];
+    logic   [`IO_WIDTH-1:0] IntpIn_Real_TEMP [0:`TESTCASE-1];
+    logic   [`IO_WIDTH-1:0] IntpOut_Real_TEMP [0:(`TESTCASE-3)*`MU_NUM-1];   // 88 個點
+    logic   [`IO_WIDTH-1:0] IntpOut_Real_GOLDEN [0:(`TESTCASE-3)*`MU_NUM-1]; // 88 個點
+    logic   [`IO_WIDTH-1:0] IntpIn_Imag_TEMP [0:`TESTCASE-1];
+    logic   [`IO_WIDTH-1:0] IntpOut_Imag_TEMP [0:(`TESTCASE-3)*`MU_NUM-1];   // 88 個點
+    logic   [`IO_WIDTH-1:0] IntpOut_Imag_GOLDEN [0:(`TESTCASE-3)*`MU_NUM-1]; // 88 個點
     
     initial begin
-        $readmemh({`Path, "x1_real_in.dat"}, IntpIn_TEMP);
         $readmemh({`Path, "mu_in.dat"}, Mu_TEMP);
-        $readmemh({`Path, "golden_real.dat"}, IntpOut_GOLDEN);
+        $readmemh({`Path, "x1_real_in.dat"}, IntpIn_Real_TEMP);
+        $readmemh({`Path, "golden_real.dat"}, IntpOut_Real_GOLDEN);
+        $readmemh({`Path, "x1_imag_in.dat"}, IntpIn_Imag_TEMP);
+        $readmemh({`Path, "golden_imag.dat"}, IntpOut_Imag_GOLDEN);
     end
 
     always #(`CLK_PERIOD/2) clk = ~clk;
@@ -51,9 +58,10 @@ module TESTED();
 
     initial begin
         wait(IntpOut_valid);
-        for(int i=0; i<`TESTCASE*`MU_NUM; i++) begin
+        for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
             @(negedge clk);
-            IntpOut_TEMP[i] = IntpOut;
+            IntpOut_Real_TEMP[i] = IntpOut_Real;
+            IntpOut_Imag_TEMP[i] = IntpOut_Imag;
         end
     end
 
@@ -62,7 +70,8 @@ module TESTED();
             clk = 0;
             rst_n = 1;
             IntpIn_valid = 0;
-            IntpIn = 0;
+            IntpIn_Real = 0;
+            IntpIn_Imag = 0;
             Mu = 0;
         end
     endtask
@@ -73,7 +82,8 @@ module TESTED();
                 for(int j=0; j<`MU_NUM; j++) begin
                     @(negedge clk);
                     IntpIn_valid = 1;
-                    IntpIn = IntpIn_TEMP[i];
+                    IntpIn_Real = IntpIn_Real_TEMP[i];
+                    IntpIn_Imag = IntpIn_Imag_TEMP[i];
                     Mu = Mu_TEMP[j];
                 end
             end
@@ -82,23 +92,36 @@ module TESTED();
                 @(negedge clk);
                 Mu = Mu_TEMP[j];
                 IntpIn_valid = 0;
-                IntpIn = 0;
+                IntpIn_Real = 0;
+                IntpIn_Imag = 0;
             end
         end
     endtask
 
     task CHECK_RESULT;
         begin
-            for(int i=0; i<`TESTCASE*`MU_NUM; i++) begin
-                if(IntpOut_TEMP[i] !== IntpOut_GOLDEN[i]) begin
+            for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
+                if(IntpOut_Real_TEMP[i] !== IntpOut_Real_GOLDEN[i]) begin
                     $display("========================================");
-                    $display("               TEST FAILED              ");
+                    $display("           REAL TEST FAILED             ");
                     $display("========================================");
                     $display("  Index    : %0d", i);
-                    $display("  Output   : %h", IntpOut_TEMP[i]);
-                    $display("  Expected : %h", IntpOut_GOLDEN[i]);
+                    $display("  Output   : %h", IntpOut_Real_TEMP[i]);
+                    $display("  Expected : %h", IntpOut_Real_GOLDEN[i]);
                     $display("========================================");
-                    #10 $finish;
+                    #20 $finish;
+                end
+            end
+            for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
+                if(IntpOut_Imag_TEMP[i] !== IntpOut_Imag_GOLDEN[i]) begin
+                    $display("========================================");
+                    $display("           IMAG TEST FAILED             ");
+                    $display("========================================");
+                    $display("  Index    : %0d", i);
+                    $display("  Output   : %h", IntpOut_Imag_TEMP[i]);
+                    $display("  Expected : %h", IntpOut_Imag_GOLDEN[i]);
+                    $display("========================================");
+                    #20 $finish;
                 end
             end
             $display("========================================");
@@ -110,12 +133,18 @@ module TESTED();
     task WRITE_OUTPUT;
         integer fd;
         begin
-            fd = $fopen({`Path, "output.dat"}, "w");
-            for(int i=0; i<`TESTCASE*`MU_NUM; i++) begin
-                $fwrite(fd, "%h\n", IntpOut_TEMP[i]);
+            fd = $fopen({`Path, "output_real.dat"}, "w");
+            for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
+                $fwrite(fd, "%h\n", IntpOut_Real_TEMP[i]);
             end
             $fclose(fd);
-            $display("Output written to output.dat");
+            $display("Output written to output_real.dat");
+            fd = $fopen({`Path, "output_imag.dat"}, "w");
+            for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
+                $fwrite(fd, "%h\n", IntpOut_Imag_TEMP[i]);
+            end
+            $fclose(fd);
+            $display("Output written to output_imag.dat");
         end
     endtask
 
