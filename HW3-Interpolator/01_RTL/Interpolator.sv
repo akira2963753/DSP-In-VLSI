@@ -13,8 +13,8 @@
 
 `include "define.vh"
 
-import BF16_PKG::*;
-typedef enum logic {IDLE, PROCESSING} STATETYPE;
+import BF16_PKG::*; // 引入 BF16_PKG 以使用其中的函數和定義
+typedef enum logic {IDLE, PROCESSING} STATETYPE; // 定義狀態
 
 module Interpolator (
     input   clk,
@@ -79,7 +79,7 @@ module Interpolator (
         else cnt <= 0;
     end
 
-    // 轉回去 1 是因為這樣才能夠對齊第一組跟後面幾組 
+    // 要轉回去 1 是因為這樣才能夠對齊第一組跟後面幾組 
     always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) Sample_Pulse <= 0;  
         else if(IntpIn_valid) Sample_Pulse <= (Sample_Pulse==4'd8)? 1 : Sample_Pulse + 1;

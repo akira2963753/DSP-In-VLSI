@@ -87,7 +87,7 @@ module TESTED();
                     Mu = Mu_TEMP[j];
                 end
             end
-            // 注意這裡要輸出最後一組 Mu 不然會算不出最後一組
+            // 注意這裡還是要輸出最後一組 Mu 因為要算最後一組輸出
             for(int j=0; j<`MU_NUM; j++) begin
                 @(negedge clk);
                 Mu = Mu_TEMP[j];
@@ -138,13 +138,17 @@ module TESTED();
                 $fwrite(fd, "%h\n", IntpOut_Real_TEMP[i]);
             end
             $fclose(fd);
-            $display("Output written to output_real.dat");
+            $display("========================================");
+            $display("    Output written to output_real.dat   ");
+            $display("========================================");
             fd = $fopen({`Path, "output_imag.dat"}, "w");
             for(int i=0; i<(`TESTCASE-3)*`MU_NUM; i++) begin
                 $fwrite(fd, "%h\n", IntpOut_Imag_TEMP[i]);
             end
             $fclose(fd);
-            $display("Output written to output_imag.dat");
+            $display("========================================");
+            $display("    Output written to output_imag.dat   ");
+            $display("========================================");
         end
     endtask
 
