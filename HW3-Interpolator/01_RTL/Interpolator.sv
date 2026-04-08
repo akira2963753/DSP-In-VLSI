@@ -32,7 +32,7 @@ module Interpolator (
 
     logic [4:0] cnt;
     logic [3:0] Sample_Pulse;
-    logic pending;
+    logic [2:0] pending;
     logic [`MU_WIDTH-1:0] Mu_Reg;
     logic [`IO_WIDTH-1:0] Real_Out, Imag_Out;
 
@@ -68,8 +68,8 @@ module Interpolator (
         case(state)
             // 要先輸入 3 組資料才可以算出第一組結果，因此需要等 8 X 3 = 24 
             IDLE: next_state = (cnt==5'd23)? PROCESSING : IDLE;
-            // 如果 IntpIn_Valid = 0，也必須要輸出完最後 8 組才可以結束
-            PROCESSING: next_state = (IntpIn_valid || cnt!=5'd8)? PROCESSING : IDLE;
+            // 如果 IntpIn_Valid = 0，也必須要輸出完最後 8 (Pipeline 要 + 2) 組才可以結束
+            PROCESSING: next_state = (IntpIn_valid || cnt!=5'd10)? PROCESSING : IDLE;
         endcase
     end
 
@@ -89,7 +89,11 @@ module Interpolator (
 
     always_ff @(posedge clk or negedge rst_n) begin 
         if(!rst_n) pending <= 0;
-        else pending <= (state==PROCESSING);
+        else begin 
+            pending[0] <= (state==PROCESSING);
+            pending[1] <= pending[0];
+            pending[2] <= pending[1];
+        end
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
@@ -98,7 +102,7 @@ module Interpolator (
             IntpOut_Imag <= 0;
             IntpOut_valid <= 0;
         end
-        else if(pending && state==PROCESSING) begin
+        else if(pending[2] && state==PROCESSING) begin
             IntpOut_Real <= Real_Out;
             IntpOut_Imag <= Imag_Out;
             IntpOut_valid <= 1;
@@ -128,11 +132,20 @@ module Common_Logic(
     logic [`IO_WIDTH-1:0] XM2_0_5;  // 0.5 * X(m+2)
     logic [`IO_WIDTH-1:0] XM_0_5;   // 0.5 * X(m)
     logic [`IO_WIDTH-1:0] XM_1_5;   // 1.5 * X(m)
+    logic [`IO_WIDTH-1:0] XM1_2;     // 2 * X(m+1)
     logic [`IO_WIDTH-1:0] V2, V1, V0;
     logic [`IO_WIDTH-1:0] uV2;
     logic [`IO_WIDTH-1:0] uV2_V1;
     logic [`IO_WIDTH-1:0] uuV2_uV1;
     logic [`IO_WIDTH-1:0] uu_V2_uV1_V0;
+
+    logic [`IO_WIDTH-1:0] XM2_0_5_TEMP;
+    logic [`IO_WIDTH-1:0] XM1_2_TEMP;
+    logic [`IO_WIDTH-1:0] XM_1_5_TEMP;
+    logic [`IO_WIDTH-1:0] uV2_TEMP, uV2_V1_TEMP;
+    logic [`IO_WIDTH-1:0] XM_TEMP [0:1];
+    logic [`MU_WIDTH-1:0] Mu_TEMP [0:1];
+
 
     always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
@@ -149,6 +162,31 @@ module Common_Logic(
         end
     end
 
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
+            XM2_0_5_TEMP <= 0;
+            XM1_2_TEMP <= 0;
+            XM_1_5_TEMP <= 0;
+            uV2_TEMP <= 0;
+            uV2_V1_TEMP <= 0;
+            for(int i=0; i<2; i++) begin
+                XM_TEMP[i] <= 0;
+                Mu_TEMP[i] <= 0;
+            end
+        end
+        else begin
+            XM2_0_5_TEMP <= XM2_0_5;
+            XM1_2_TEMP <= XM1_2;
+            XM_1_5_TEMP <= XM_1_5;
+            uV2_TEMP <= uV2;
+            uV2_V1_TEMP <= uV2_V1;
+            XM_TEMP[0] <= IntpIn_Reg[2];
+            Mu_TEMP[0] <= Mu_Reg;
+            XM_TEMP[1] <= XM_TEMP[0];
+            Mu_TEMP[1] <= Mu_TEMP[0];
+        end
+    end
+
     always_comb begin
         if(state == PROCESSING) begin
             // 0.5 * X(m+2)
@@ -158,26 +196,35 @@ module Common_Logic(
             // V2 = 0.5 * X(m+2) - X(m+1) + 0.5 * X(m)
             V2 = BF16_ADD(XM2_0_5, {1'b1 ^ IntpIn_Reg[1][`IO_WIDTH-1], IntpIn_Reg[1][`IO_WIDTH-2:0]});
             V2 = BF16_ADD(V2, XM_0_5);
-
+            uV2 = BF16_MUL(V2, Mu_Reg);
+            // 2 * X(m+1) = X(m+1) + X(m+1)
+            XM1_2 = BF16_ADD(IntpIn_Reg[1], IntpIn_Reg[1]);
             // 1.5 * X(m) = X(m) 0.5 * X(m)
             XM_1_5 = BF16_ADD(IntpIn_Reg[2], XM_0_5);
 
+            // =================================================
+            //                     Pipeline 1 
+            // =================================================
+
             // V1 = -0.5 * X(m+2) + [X(m+1) + X(m+1)] - 1.5 * X(m)
-            V1 = BF16_ADD(IntpIn_Reg[1], IntpIn_Reg[1]);
-            V1 = BF16_ADD(V1, {1'b1 ^ XM2_0_5[`IO_WIDTH-1], XM2_0_5[`IO_WIDTH-2:0]});
-            V1 = BF16_ADD(V1, {1'b1 ^ XM_1_5[`IO_WIDTH-1], XM_1_5[`IO_WIDTH-2:0]});
-         
-            // V0 = X(m)
-            V0 = IntpIn_Reg[2];
-            uV2 = BF16_MUL(V2, Mu_Reg);
-            uV2_V1 = BF16_ADD(uV2, V1);
-            uuV2_uV1 = BF16_MUL(uV2_V1, Mu_Reg);
+            V1 = BF16_ADD(XM1_2_TEMP, {1'b1 ^ XM2_0_5_TEMP[`IO_WIDTH-1], XM2_0_5_TEMP[`IO_WIDTH-2:0]});
+            V1 = BF16_ADD(V1, {1'b1 ^ XM_1_5_TEMP[`IO_WIDTH-1], XM_1_5_TEMP[`IO_WIDTH-2:0]});
+            uV2_V1 = BF16_ADD(uV2_TEMP, V1);
+
+            // =================================================
+            //                     Pipeline 2 
+            // =================================================   
+
+            // V0 = X(m), V0 = IntpIn_Reg[2];
+            V0 = XM_TEMP[1];
+            uuV2_uV1 = BF16_MUL(uV2_V1_TEMP, Mu_TEMP[1]);
             uu_V2_uV1_V0 = BF16_ADD(uuV2_uV1, V0);
         end
         else begin
             XM2_0_5 = 0;
             XM_0_5 = 0;
             XM_1_5 = 0;
+            XM1_2 = 0;
             V2 = 0;
             V1 = 0;
             V0 = 0;
