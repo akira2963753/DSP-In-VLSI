@@ -1,0 +1,468 @@
+\documentclass[12pt,a4paper]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[lining]{ebgaramond}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{pdflscape}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{makecell}
+\graphicspath{{./}}
+
+% Page layout
+\geometry{
+    left=1.8cm,
+    right=1.8cm,
+    top=2.2cm,
+    bottom=2.2cm
+}
+
+% Color definitions
+\definecolor{crimson}{RGB}{153, 0, 0}
+\definecolor{darkblue}{RGB}{0, 0, 153}
+
+% Hyperlink settings
+\hypersetup{
+    colorlinks=true,
+    linkcolor=crimson,
+    urlcolor=crimson,
+    citecolor=crimson
+}
+
+% Allow line breaks at slashes to prevent overfull hbox
+\tolerance=2000
+\emergencystretch=2em
+
+% Chapter/section title formatting
+\usepackage{titlesec}
+\titleformat{\chapter}{\normalfont\huge\bfseries}{}{0pt}{}[\vspace{0.3em}]
+\titlespacing*{\chapter}{0pt}{0pt}{14pt}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\pagestyle{plain}
+
+% ─────────────────────────────────────────────
+%  Cover Page
+% ─────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\fontsize{28}{34}\selectfont\bfseries DSP in VLSI\par}
+\vspace{0.6em}
+{\fontsize{20}{26}\selectfont\bfseries Homework 3\par}
+\vspace{0.4em}
+{\fontsize{16}{22}\selectfont\bfseries Interpolator\par}
+
+\vspace{1.5cm}
+\textcolor{crimson}{\rule{0.6\linewidth}{1.2pt}}
+\vspace{1.5cm}
+
+{\large\bfseries Student ID}\par
+\vspace{0.4em}
+{\large M11407439}\par
+
+\vspace{0.8em}
+
+{\large\bfseries Name}\par
+\vspace{0.4em}
+{\large MING-HONG, LIN}\par
+
+\vspace{2cm}
+
+{\large\bfseries Development Environment}\par
+\vspace{0.8em}
+\begin{tabular}{rl}
+    \textbf{HDL}              & Verilog HDL \\[4pt]
+    \textbf{Simulation Tools} & Synopsys VCS and Verdi \\[4pt]
+    \textbf{Synthesis Tool}   & Synopsys DC Compiler \\[4pt]
+    \textbf{Process}          & TSMC 16nm(ADFP) \\[4pt]
+    \textbf{Verification}     & Python \\
+\end{tabular}
+
+\vfill
+
+\textcolor{crimson}{\rule{0.6\linewidth}{0.6pt}}\par
+\vspace{0.5em}
+{\small Due Date: 2026/04/15}
+
+\end{titlepage}
+
+% ─────────────────────────────────────────────
+%  Table of Contents
+% ─────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 1 — Interpolator Function Verification (Over-Sampled Cases)}
+% ─────────────────────────────────────────────
+
+Assume that
+\[
+    x_1[m] = \cos\!\left(2\pi\!\left(\frac{mT_s}{10T_s}+\frac{\phi}{2}\right)\right)
+            + j\sin\!\left(2\pi\!\left(\frac{mT_s}{10T_s}+\frac{\phi}{2}\right)\right),
+\]
+where $\phi = \mathrm{mod}(d,\,2)$ and $d$ is the last digit of your student ID.
+The sampling frequency is 10 times the frequency of the sinusoidal wave.
+
+Please use \textbf{linear interpolator} and \textbf{second-order polynomial
+interpolator} to interpolate the sampled waveform in the region of
+$10 \le m \le 20$ with $\mu = 0,\tfrac{1}{8},\tfrac{2}{8},\ldots\tfrac{7}{8}$.
+Note that you have $x_1[9]$ when you want to interpolate $x_1[10.125]$.
+
+Show the \textbf{real-part} and \textbf{imaginary-part} output waveform
+$\hat{x}_1[m+\mu]$ after interpolation for both methods.
+In addition, draw the absolute error
+$|x_1[m+\mu]-\hat{x}_1[m+\mu]|$
+in the region of $10 \le m \le 20$ with
+$\mu = 0,\tfrac{1}{8},\tfrac{2}{8},\ldots\tfrac{7}{8}$.
+\textbf{(30\%)}
+
+\section{Linear vs Second-Order Polynomial Interpolator}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image0.png}
+    \caption{Waveform of Linear vs Second-Order Polynomial Interpolator}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image1.png}
+    \caption{Absolute Error Comparison of Linear vs Second-Order Polynomial Interpolator}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 2 — Interpolator Function Verification (Typical Cases)}
+% ─────────────────────────────────────────────
+
+Assume that
+\[
+    x_2[m] = 2^{-20}\!\left[\cos\!\left(2\pi\!\left(\frac{mT_s}{4T_s}+\frac{\phi}{3}\right)\right)
+            + j\sin\!\left(2\pi\!\left(\frac{mT_s}{4T_s}+\frac{\phi}{3}\right)\right)\right],
+\]
+where $\phi$ is the same parameter according to your student ID.
+The sampling frequency is 4 times the frequency of the sinusoidal wave.
+
+Please use \textbf{linear interpolator} and \textbf{piecewise parabolic interpolator}
+to interpolate the sampled waveform in the region of $4 \le m \le 8$ with
+$\mu = 0,\tfrac{1}{9},\tfrac{2}{9},\ldots\tfrac{8}{9}$.
+
+Show the \textbf{real-part} and \textbf{imaginary-part} output waveform
+$\hat{x}_2[m+\mu]$ after interpolation.
+In addition, draw the absolute error
+$|x_2[m+\mu]-\hat{x}_2[m+\mu]|$
+in the region of $4 \le m \le 8$ with
+$\mu = 0,\tfrac{1}{8},\tfrac{2}{8},\ldots\tfrac{7}{8}$.
+\textbf{(30\%)}
+
+\section{Linear vs Piecewise Parabolic Interpolator}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image2.png}
+    \caption{Waveform of Linear vs Piecewise Parabolic Interpolator}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image3.png}
+    \caption{Absolute Error Comparison of Linear vs Piecewise Parabolic Interpolator}
+    \label{fig:placeholder}
+\end{figure}
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 3 — Bit-True Model (BF16)}
+% ─────────────────────────────────────────────
+
+Please use \textbf{BF16 format} to realize addition and multiplication.
+Write the bit-true model (simulated program in Python) to realize BF16 additions
+and multiplication. For simplicity, NaN, infinity, and subnormal numbers are not
+handled — if the magnitude is smaller than the smallest normal number, use
+\textbf{truncation} to make it become 0. Truncation is also used to avoid
+renormalization.
+
+Show the results calculated by your BF16 bit-true model for the following operands.
+Express results both in \textbf{decimal} and \textbf{binary} representation
+(S = sign bit, E = exponent field, F = fraction field, all in binary).
+\textbf{(20\%)}
+
+\section{BF16 Operation Results}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{cllc}
+        \toprule
+        & \textbf{Operand 1} & \textbf{Operand 2} & \textbf{Operation} \\
+        \midrule
+        (a) &
+        \makecell[l]{S: 1 \\ E: \texttt{1000\_0011} \\ F: \texttt{0000\_000}} &
+        \makecell[l]{S: 0 \\ E: \texttt{1000\_1011} \\ F: \texttt{0000\_011}} &
+        Addition \\
+        \midrule
+        (b) &
+        \makecell[l]{S: 1 \\ E: \texttt{0000\_0001} \\ F: \texttt{0000\_011}} &
+        \makecell[l]{S: 0 \\ E: \texttt{0000\_0001} \\ F: \texttt{1111\_010}} &
+        Addition \\
+        \midrule
+        (c) &
+        \makecell[l]{S: 1 \\ E: \texttt{0000\_0010} \\ F: \texttt{1100\_000}} &
+        \makecell[l]{S: 0 \\ E: \texttt{0111\_1100} \\ F: \texttt{0000\_110}} &
+        Multiplication \\
+        \midrule
+        (d) &
+        \makecell[l]{S: 0 \\ E: \texttt{0110\_0011} \\ F: \texttt{1011\_110}} &
+        \makecell[l]{S: 0 \\ E: \texttt{1001\_0011} \\ F: \texttt{0101\_000}} &
+        Multiplication \\
+        \bottomrule
+    \end{tabular}
+    \caption{BF16 operands and operations.}
+    \label{tab:bf16-ops}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{clllc}
+        \toprule
+        & \textbf{Operation} & \textbf{Decimal} & \textbf{S} & \textbf{E \& F (binary)} \\
+        \midrule
+        (a) & Addition       & $4192$      & 0 & E: \texttt{1000\_1011},\ F: \texttt{0000\_011} \\
+        (b) & Addition       & $0$         & 0 & E: \texttt{0000\_0000},\ F: \texttt{0000\_000} \\
+        (c) & Multiplication & $0$         & 0 & E: \texttt{0000\_0000},\ F: \texttt{0000\_000} \\
+        (d) & Multiplication & $0.0088501$ & 0 & E: \texttt{0111\_1000},\ F: \texttt{0010\_001} \\
+        \bottomrule
+    \end{tabular}
+    \caption{BF16 operation results.}
+    \label{tab:bf16-results}
+\end{table}
+
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 4 — Performance Degradation by Finite Precision}
+% ─────────────────────────────────────────────
+
+Please analyze the error of the \textbf{second-order interpolator} if its arithmetic
+operations are changed to BF16 by using the bit-true model.
+
+Draw the figures indicating the difference of interpolated results caused by data
+format for outputs $\hat{x}_1[m+\mu]$ in the region of $10 \le m \le 20$
+with $\mu = 0,\tfrac{1}{8},\tfrac{2}{8},\ldots\tfrac{7}{8}$.
+\textbf{(10\%)}
+
+\section{Quantization Error Analysis}
+As shown in the figure below, switching the arithmetic from double precision to
+BF16 introduces a noticeable quantisation error due to the reduced mantissa
+width (7 bits) of the BF16 format.  The peak absolute errors observed over the
+interpolation range $10 \le m \le 20$ are summarised below:
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Component} & \textbf{Max Absolute Error} \\
+        \midrule
+        Real part & $1.5959 \times 10^{-2}$ \\
+        Imaginary part & $1.6048 \times 10^{-2}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Maximum absolute error introduced by BF16 arithmetic in the second-order interpolator.}
+    \label{tab:bf16-error}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image4.png}
+    \caption{Interpolation Error Caused by BF16 Finite Precision (Second-Order Interpolator)}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 5 — Hardware Reduction}
+% ─────────────────────────────────────────────
+
+Draw the complete block diagram of your first version implementation according to Fig. 4. (5\%) Show your hardware sharing version (The precision of the datapath must be BF16 and can not be changed.) (10\%) Draw the block diagram after your improvement. (5\%) Indicate the critical path (5\%) 
+
+\section{Original Block Diagram (Farrow Structure)}
+
+The second-order polynomial interpolator in Farrow structure decomposes the
+interpolation into three fixed sub-filters $v_0$, $v_1$, and $v_2$, whose
+outputs are combined as
+\[
+    \hat{x}[m+\mu] = v_0 + \mu\,v_1 + \mu^2\,v_2.
+\]
+The coefficients of each sub-filter are derived from three consecutive input
+samples $X[m]$, $X[m+1]$, and $X[m+2]$ as summarised in
+Table~\ref{tab:farrow-coeffs}.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.4}
+    \begin{tabular}{clll}
+        \toprule
+        \textbf{Sub-filter} & \textbf{$X[m]$} & \textbf{$X[m+1]$} & \textbf{$X[m+2]$} \\
+        \midrule
+        $v_2$ & $+\tfrac{1}{2}$ & $-1$   & $+\tfrac{1}{2}$ \\
+        $v_1$ & $-\tfrac{3}{2}$ & $+2$   & $-\tfrac{1}{2}$ \\
+        $v_0$ & $+1$            & $\;0$  & $\;0$           \\
+        \bottomrule
+    \end{tabular}
+    \caption{Farrow sub-filter coefficients for the second-order polynomial interpolator.}
+    \label{tab:farrow-coeffs}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Interpolator.png}
+    \caption{Enter Caption}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+\section{Hardware Sharing Approaches}
+
+Three hardware optimisations were applied to reduce resource usage and improve
+operating frequency.
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+
+\item \textbf{Shared delay-line (single DFF chain).}
+      The original structure uses three independent delay lines, one per
+      sub-filter branch.  Since all three branches consume the same input
+      samples $X[m]$, $X[m+1]$, and $X[m+2]$, a single shared shift-register
+      chain suffices, eliminating two redundant sets of D flip-flops.
+
+\item \textbf{Multiplier-free scaling.}
+      The dominant coefficient in the design is $0.5$.  In BF16
+      format, multiplication by $0.5$ reduces to decrementing the
+      exponent field by one — no multiplier is needed.  Accordingly, all
+      $\times 0.5$ operations are replaced by a one-bit exponent
+      adjustment.  The coefficient $\times 2$ is likewise converted to an
+      equivalent addition ($A + A$), and $\times 1.5$ is decomposed
+      into $A + 0.5A$, so that the entire datapath requires no
+      general-purpose multipliers.
+
+\item \textbf{Two-stage pipeline insertion.}
+      To increase the maximum operating frequency, two pipeline registers are
+      inserted across the critical path, balancing the combinational logic
+      depth between stages.
+
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Interpolator2.png}
+    \caption{Block Diagram with Hardware Sharing Approaches}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+% ─────────────────────────────────────────────
+\chapter{Step 6 — Implementation}
+% ─────────────────────────────────────────────
+
+Please write Verilog to implement the \textbf{second-order interpolator} of
+Farrow structure using \textbf{BF16 arithmetic units} after hardware reduction.
+Insert D flip-flops at inputs and outputs.
+
+Note: The input to be interpolated changes \textbf{every 8 clock cycles};
+the $\mu$ value changes \textbf{every clock cycle}.
+
+\section{Behavior Simulation}
+
+Show the timing diagram of behavior simulation for the
+\textbf{first 8} ($\mu = 0,\tfrac{1}{8},\ldots\tfrac{7}{8}$) and
+\textbf{last 8} ($\mu = 0,\tfrac{1}{8},\ldots\tfrac{7}{8}$)
+interpolated outputs of $\hat{x}_1[m+\mu]$
+in the region of $10 \le m \le 20$.
+
+Show the \textbf{real-part} and \textbf{imaginary-part} error of hardware
+implementation results compared to the double-precision results.
+\textbf{(30\%)}
+
+\newpage
+
+\section{Timing Report and Constraint}
+
+Show your \textbf{timing report} to verify the critical path of the block diagram
+in Step~5. \textbf{(10\%)}
+List your \textbf{timing constraint} for post-synthesis simulation. \textbf{(5\%)}
+
+% [Insert timing report screenshot here]
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Parameter} & \textbf{Value (ns)} \\
+        \midrule
+        Clock Period                  & 5\\
+        Clock Uncertainty             & 0.1\\
+        Clock Latency                 & 0.1\\
+        Input / Output Maximum Delay  & 0.5\\
+        \bottomrule
+    \end{tabular}
+    \caption{Timing constraint settings.}
+    \label{tab:timing-constraint}
+\end{table}
+
+\newpage
+
+\section{Post-Synthesis Simulation}
+
+Show the timing diagram of \textbf{post-synthesis simulation} for the
+first 8 and last 8 interpolated outputs of $\hat{x}_1[m+\mu]$
+in the region of $10 \le m \le 20$.
+
+Show the \textbf{real-part} and \textbf{imaginary-part} error of post-synthesis
+hardware outputs compared to the double-precision results. \textbf{(20\%)}
+
+% [Insert post-synthesis timing diagram (first 8 and last 8 outputs) here]
+% [Insert real-part and imaginary-part error figures here]
+
+\newpage
+
+\section{BF16 Bit-True Model vs. Verilog Output Verification}
+
+Construct the \textbf{BF16 bit-true model} following the architecture after
+hardware improvement. Depict the \textbf{real-part} and \textbf{imaginary-part}
+errors of interpolated outputs $\hat{x}_1[m+\mu]$ between the Verilog outputs
+and the bit-true model in the region of $10 \le m \le 20$
+with $\mu = 0,\tfrac{1}{8},\tfrac{2}{8},\ldots\tfrac{7}{8}$. \textbf{(20\%)}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image5.png}
+    \caption{BF16 Bit-True Model vs. Verilog Output}
+    \label{fig:placeholder}
+\end{figure}
+
+\end{document}

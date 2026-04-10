@@ -90,9 +90,7 @@ module Interpolator (
     always_ff @(posedge clk or negedge rst_n) begin 
         if(!rst_n) pending <= 0;
         else begin 
-            pending[0] <= (state==PROCESSING);
-            pending[1] <= pending[0];
-            pending[2] <= pending[1];
+            pending <= {pending[1:0], (state == PROCESSING)};
         end
     end
 
@@ -150,6 +148,7 @@ module Common_Logic(
     always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             for(int i=0; i<`NUM; i++) IntpIn_Reg[i] <= 0;
+            IntpIn_TEMP <= 0;
         end
         else begin
             if(Sample_Pulse==4'd7) IntpIn_TEMP <= IntpIn;

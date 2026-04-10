@@ -139,7 +139,6 @@ module TESTED();
                 $fwrite(fd, "%h\n", IntpOut_Real_TEMP[i]);
             end
             $fclose(fd);
-            $display("========================================");
             $display("    Output written to output_real.dat   ");
             $display("========================================");
             fd = $fopen({`Path, "output_imag.dat"}, "w");
@@ -147,7 +146,6 @@ module TESTED();
                 $fwrite(fd, "%h\n", IntpOut_Imag_TEMP[i]);
             end
             $fclose(fd);
-            $display("========================================");
             $display("    Output written to output_imag.dat   ");
             $display("========================================");
         end
@@ -158,5 +156,17 @@ module TESTED();
         $fsdbDumpvars(0, TESTED);
         $fsdbDumpMDA;
     end
-    
+
+`ifdef GATE_SIM
+    initial begin
+        $display("========================================");
+        $display("       GATE-LEVEL SIMULATION START      ");
+        $display("========================================");        
+    end
+
+    // 03_GATESIM 
+    initial $sdf_annotate("../02_SYN/Netlist/Interpolator.sdf", DUT);
+
+`endif
+
 endmodule

@@ -1,4 +1,4 @@
-set toplevel Digital_Filter 
+set toplevel Interpolator 
 # set filelist {../RTL/}
 set sh_continue_on_error false
 set compile_preserve_subdesign_interfaces true
@@ -65,23 +65,26 @@ define_name_rules name_rule -map {{"\\*cell\\*" "cell"}}
 define_name_rules name_rule -case_insensitive
 change_names -hierarchy -rules name_rule
 
+sh mkdir -p Netlist
+sh mkdir -p Report
+
 set filename [format "%s%s" $toplevel "_opt.ddc"]
-write -format ddc -hierarchy -output $filename
+write -format ddc -hierarchy -output ./Netlist/$filename
 
 set filename [format "%s%s" $toplevel ".sdf"]
-write_sdf -version 2.1 -load_delay net $filename
+write_sdf -version 2.1 -load_delay net ./Netlist/$filename
 
 set filename [format "%s%s" $toplevel "_syn.v"]
-write -format verilog -hierarchy -output $filename
-sh sed -i {6i \`timescale 1ns/1ps} ./${toplevel}_syn.v
+write -format verilog -hierarchy -output ./Netlist/$filename
+sh sed -i {6i \`timescale 1ns/1ps} ./Netlist/${toplevel}_syn.v
 
 set filename [format "%s%s" $toplevel ".sdc"]
-write_sdc $filename
+write_sdc ./Netlist/$filename
 
-redirect [format "%s" power.rpt] { report_power }
-redirect [format "%s" area.rpt] { report_area }
-redirect [format "%s" area_hier.rpt] { report_area -hierarchy }
-redirect [format "%s" timing.rpt] { report_timing }
+redirect ./Report/power.txt      { report_power }
+redirect ./Report/area.txt       { report_area }
+redirect ./Report/area_hier.txt  { report_area -hierarchy }
+redirect ./Report/timing.txt     { report_timing }
 
 remove_design -all
 
