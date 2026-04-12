@@ -1,8 +1,8 @@
 # DSP in VLSI at NTU (ICDA5003)
 
 **Course content for `NTU-ICDA 2026 Spring — DSP In VLSI` Lab & Final Project.**
-- Implements DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator, and Sorter in TSMC 16nm.
-- Leverage [**Claude Code Skill**](./Skill) to automate project scaffolding and environment configuration.
+- Implements DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator, and Sorter in TSMC 16nm
+- Leverage [**Claude Code Skill**](./Skill) to automate project scaffolding and environment configuration
 
 ---
 
