@@ -1,9 +1,9 @@
 /******************************************************************************
 * Copyright (C) 2026 Marco
 *
-* File Name:    TESTED.sv
+* File Name:    TESTBED.sv
 * Project:      [HW3] 2026 Spring DSP In VLSI @NTU <ICDA5003>
-* Module:       TESTED
+* Module:       TESTBED
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
@@ -13,7 +13,7 @@
 `timescale  1ns/1ps
 `include "../01_RTL/define.vh"
 
-module TESTED();
+module TESTBED();
 
     logic   clk;
     logic   rst_n;
@@ -153,7 +153,7 @@ module TESTED();
 
     initial begin
         $fsdbDumpfile("wave.fsdb");
-        $fsdbDumpvars(0, TESTED);
+        $fsdbDumpvars(0, TESTBED);
         $fsdbDumpMDA;
     end
 

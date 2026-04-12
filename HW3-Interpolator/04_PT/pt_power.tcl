@@ -15,7 +15,7 @@ read_sdc ../02_SYN/Netlist/Interpolator.sdc
 set power_enable_analysis true
 
 # 5. Apply Switching Activity (SAIF)
-read_saif -strip_path TESTED/DUT ../03_GATESIM/wave.saif
+read_saif -strip_path TESTBED/DUT ../03_GATESIM/wave.saif
 
 # 6. Set Operating Conditions (worst case)
 set_operating_conditions slow -library slow
