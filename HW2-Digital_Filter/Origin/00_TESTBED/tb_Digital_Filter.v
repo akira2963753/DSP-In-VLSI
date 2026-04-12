@@ -1,55 +1,48 @@
 /******************************************************************************
 * Copyright (C) 2026 Marco
 *
-* File Name:    Digital_Filter_Parallel.v
+* File Name:    tb_Digital_Filter.v
 * Project:      [HW2] 2026 Spring DSP In VLSI @NTU <ICDA5003>
-* Module:       Digital_Filter_Parallel
+* Module:       tb_Digital_Filter
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
 * 
 ******************************************************************************/
-
 `timescale 1ns/1ps
 `define X_WIDTH     16    // FilterIn Width
 `define Y_WIDTH     21    // FilterOut Width
 `define X_NUM       144
-`define X_NUM_P     `X_NUM/2
 `define CYCLE       1
-`define SRC_PATH    "../00_TESTED/src/"
+`define SRC_PATH    "../00_TESTBED/src/"
 
-module tb_Digital_Filter_Parallel;
+module tb_Digital_Filter();
 
-    // DUT Signals
-    reg                                 clk;
-    reg                                 rst_n;
-    reg     signed    [`X_WIDTH-1:0]    FilterIn0;
-    reg     signed    [`X_WIDTH-1:0]    FilterIn1;
-    reg                                 ValidIn;
-    wire    signed    [`Y_WIDTH-1:0]    FilterOut0;
-    wire    signed    [`Y_WIDTH-1:0]    FilterOut1;
-    wire                                ValidOut;
+    reg clk;
+    reg rst_n;
+    reg signed [`X_WIDTH-1:0] FilterIn;
+    reg ValidIn;
+    wire signed [`Y_WIDTH-1:0] FilterOut;
+    wire ValidOut;
+    reg [7:0] OUTPUT_CNT;
 
     integer i,j;
     integer output_file;
-    Digital_Filter_Parallel DUT(.*);
+    Digital_Filter DUT(.*);
 
     reg signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
-    reg [7:0] OUTPUT_CNT0;
-    reg [7:0] OUTPUT_CNT1;
+    initial $readmemb({`SRC_PATH ,"input.dat"},IN_TEMP);
 
-    initial $readmemb({`SRC_PATH, "input.dat"},IN_TEMP);
     always #(`CYCLE/2) clk = ~clk;
 
     initial begin
         // Reset ALL
-        clk = 0; rst_n = 1; FilterIn0 = 0; FilterIn1 = 0; ValidIn = 0;
-        OUTPUT_CNT0 = 0; OUTPUT_CNT1 = 0;
+        clk = 0; rst_n = 1; FilterIn = 0; ValidIn = 0; OUTPUT_CNT = 0;
         @(negedge clk) rst_n = 0;
         @(negedge clk) rst_n = 1;
         input_data();
         @(negedge clk);
-        FilterIn0 = 0; FilterIn1 = 0; ValidIn = 0;
+        FilterIn = 0; ValidIn = 0;
         wait(!ValidOut);
         $display("Simulation Success !");
         #20 $finish;
@@ -63,10 +56,9 @@ module tb_Digital_Filter_Parallel;
     task input_data;
         begin
             @(negedge clk); // Delay
-            for(i=0; i<`X_NUM; i=i+2) begin
+            for(i=0; i<`X_NUM; i=i+1) begin
                 @(negedge clk);
-                FilterIn0 = IN_TEMP[i];
-                FilterIn1 = IN_TEMP[i+1];
+                FilterIn = IN_TEMP[i];
                 ValidIn = 1;
             end
         end
@@ -74,19 +66,17 @@ module tb_Digital_Filter_Parallel;
 
     initial begin
         $fsdbDumpfile("wave.fsdb");
-        $fsdbDumpvars(0, tb_Digital_Filter_Parallel);
+        $fsdbDumpvars(0, tb_Digital_Filter);
         $fsdbDumpMDA;
     end
 
     initial begin
         output_file = $fopen({`SRC_PATH, "output.dat"}, "w");
         wait(ValidOut) begin
-            for(j=0; j<`X_NUM_P; j=j+1) begin
+            for(j=0; j<`X_NUM; j=j+1) begin
                 @(negedge clk);
-                $fdisplay(output_file, "%0d", FilterOut0);
-                $fdisplay(output_file, "%0d", FilterOut1);
-                OUTPUT_CNT0 = j*2;
-                OUTPUT_CNT1 = j*2 + 1;
+                $fdisplay(output_file, "%0d", FilterOut);
+                @(posedge clk) OUTPUT_CNT = OUTPUT_CNT + 1;
             end
         end
         $fclose(output_file);

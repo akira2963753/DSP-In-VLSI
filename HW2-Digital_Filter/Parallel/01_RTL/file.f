@@ -1,2 +1,2 @@
 -sverilog ./Digital_Filter_Parallel.v
--sverilog ../00_TESTED/tb_Digital_Filter_Parallel.v
+-sverilog ../00_TESTBED/tb_Digital_Filter_Parallel.v

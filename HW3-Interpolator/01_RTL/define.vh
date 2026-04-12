@@ -17,6 +17,6 @@
     `define MU_NUM      8
     `define TESTCASE    13
     `define CLK_PERIOD  10
-    `define Path        "../00_TESTED/src/"
+    `define Path        "../00_TESTBED/src/"
 
 `endif

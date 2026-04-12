@@ -11,7 +11,7 @@
 *****************************************************************************/
 `timescale 1ns/1ps
 `define TEST_CASE 4
-`define SRC_PATH "../00_TESTED/"
+`define SRC_PATH "../00_TESTBED/"
 
 module tb_SelectTopK();
 

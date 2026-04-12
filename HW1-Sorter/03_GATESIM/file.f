@@ -1,3 +1,3 @@
 -sverilog ../02_SYN/SelectTopK_syn.v
--sverilog ../00_TESTED/tb_SelectTopK.v
+-sverilog ../00_TESTBED/tb_SelectTopK.v
 -v tsmc090.v
