@@ -214,7 +214,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Hkw3P12i-Wvg6L0QSxY3-77" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=#e1d5e7;align=center;verticalAlign=middle;rounded=0;" value="&lt;font face=&quot;Georgia&quot;&gt;&lt;b style=&quot;&quot;&gt;Critical Path&lt;/b&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="15" width="87" x="334" y="500" as="geometry" />
+          <mxGeometry height="15" width="87" x="430" y="80" as="geometry" />
         </mxCell>
         <mxCell id="A0ZAV-p-SS-IHCeOc2IE-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=default;strokeWidth=2;" value="" vertex="1">
           <mxGeometry height="540" width="5" x="530" y="80" as="geometry" />

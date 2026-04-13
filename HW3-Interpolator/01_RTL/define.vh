@@ -16,7 +16,7 @@
     // Testbench
     `define MU_NUM      8
     `define TESTCASE    13
-    `define CLK_DIV2    0.5
+    `define CLK_DIV2    0.4
     `define Path        "../00_TESTBED/src/"
 
 `endif
