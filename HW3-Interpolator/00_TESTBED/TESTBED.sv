@@ -43,7 +43,7 @@ module TESTBED();
         $readmemh({`Path, "golden_imag.dat"}, IntpOut_Imag_GOLDEN);
     end
 
-    always #(`CLK_PERIOD/2) clk = ~clk;
+    always #(`CLK_DIV2) clk = ~clk;
 
     initial begin
         RESET_ALL();
@@ -63,6 +63,14 @@ module TESTBED();
             IntpOut_Real_TEMP[i] = IntpOut_Real;
             IntpOut_Imag_TEMP[i] = IntpOut_Imag;
         end
+    end
+
+    initial begin
+        #100000;
+        $display("========================================");
+        $display("        TEST FAILED (OUT OF TIME)       ");
+        $display("========================================");
+        #10 $finish;
     end
 
     task RESET_ALL;

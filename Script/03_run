@@ -1,2 +1,0 @@
-cp ../02_SYN/Netlist/Digital_Filter_syn.sdf .
-vcs -full64 -debug_access+all -R +v2k -f file.f +neg_tchk +sdfverbose -sdf max:Digital_Filter:Digital_Filter.sdf
