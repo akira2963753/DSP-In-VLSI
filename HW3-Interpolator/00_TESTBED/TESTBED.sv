@@ -189,7 +189,7 @@ module TESTBED();
         $fsdbDumpMDA;
     end
     
-    // Property Setting for Assertion (設定一個簡單的 Property)
+    // Property Setting for Assertion
     property output_clear; // 當 IntpOut_valid 從 1 跌到 0 的時候，下一個 Cycle 輸出應該被清零
           @(posedge clk) $fell(IntpOut_valid) |=> (IntpOut_Real === '0) && (IntpOut_Imag === '0);
     endproperty
