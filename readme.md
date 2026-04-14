@@ -47,9 +47,10 @@ vcs -full64 -debug_access+all -R +v2k -f file.f +neg_tchk +sdfverbose -sdf max:I
 
 ## Lab Results
 
-| Lab | DSP IP | Area | Clock Frequency | Process | Report |
-|:---:|:-------|-----:|:---------------:|:-------:|:------:|
-| 1 | [Sorter](./HW1-Sorter) | 665 µm² | 1 GHz | TSMC 16nm (ADFP) | [Report](./HW1-Sorter/HW1_Sorter.pdf) |
-| 2 | [Digital Filter](./HW2-Digital_Filter) | 2943 µm² | 1 GHz | TSMC 16nm (ADFP) | [Report](./HW2-Digital_Filter/HW2_Digital_Filter.pdf) |
-| 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz| TSMC 16nm (ADFP)| [Report](./HW3-Interpolator/HW3_Interpolator.pdf)|
+| Lab | DSP IP | Area | Clock Frequency | Process | Report | HDL |
+|:---:|:-------|-----:|:---------------:|:-------:|:------:|:---:|
+| 1 | [Sorter](./HW1-Sorter) | 665 µm² | 1 GHz | TSMC 16nm (ADFP) | [REPORT](./HW1-Sorter/HW1_Sorter.pdf) | Verilog |
+| 2 | [Digital Filter](./HW2-Digital_Filter) | 2943 µm² | 1 GHz | TSMC 16nm (ADFP) | [REPORT](./HW2-Digital_Filter/HW2_Digital_Filter.pdf) | Verilog |
+| 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz| TSMC 16nm (ADFP)| [REPORT](./HW3-Interpolator/HW3_Interpolator.pdf)| SystemVerilog |
+| 4 | [CORDIC](./HW4-CORDIC) |  |  | TSMC 16nm (ADFP) |  [REPORT]| SystemVerilog |
 
