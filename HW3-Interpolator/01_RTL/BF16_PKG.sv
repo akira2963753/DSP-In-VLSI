@@ -12,10 +12,11 @@
 `include "define.vh"
 `timescale 1ns/1ps
 
-// Function 記得要使用 Autoamatic，才能被正確合成
-package BF16_PKG;
-    // Leading One Detector: 回傳需左移幾位才能讓 implicit 1 回到 bit7
-    function automatic [2:0] LOD;
+// Function 記得要使用 Autoamatic，才能被正確合成 ! 
+package BF16_PKG; // 直接把這些常用 Function 寫在一個 Package 裡面，會比較方便一點
+
+    // 回傳需左移幾位才能讓 implicit 1 回到 bit7
+    function automatic [2:0] LOD; // Leading One Detector + Priority Decoder
         input [`MIN_WIDTH:0] val; // 8-bit: Result_add[MIN_WIDTH:0]
         begin
             casez(val)
@@ -47,7 +48,24 @@ package BF16_PKG;
             else BF16_HALF = {A_sign, A_exp - `EXP_WIDTH'd1, A_min}; // 指數減1
 
             // 上面這裡要注意一個陷阱，使用 {} 來組合的時候，如果直接寫 A_exp - 1 
-            // 會被當成 32-bit 的減法，導致結果不正確
+            // 會被當成 32-bit 的減法，導致結果不正確，因此在使用 {} 盡量把位寬寫好，如果懶的話也可以用 SV 的 'd 功能
+        end
+    endfunction
+
+    // BF16 x 2 Function 跟 x0.5 一樣，可以寫一個專用 Function，不需要真正用 Mul 或是 Adder 處理
+    function automatic [`IO_WIDTH-1:0] BF16_DOUBLE;
+        input [`IO_WIDTH-1:0] A;
+        logic A_sign;
+        logic [`EXP_WIDTH-1:0] A_exp;
+        logic [`MIN_WIDTH-1:0] A_min;
+
+        begin
+            BF16_DOUBLE = 16'h0000; // Default output
+
+            // 提取符號、指數和尾數
+            {A_sign, A_exp, A_min} = A;
+            if(A_exp >= `EXP_WIDTH'd254) BF16_DOUBLE = {A_sign, 8'hFE, 7'h7F}; // Overflow
+            else BF16_DOUBLE = {A_sign, A_exp + `EXP_WIDTH'd1, A_min}; // 指數加1
         end
     endfunction
 
@@ -172,7 +190,7 @@ package BF16_PKG;
         end
     endfunction
 
-    /* 這裡不選擇單純採用 LOD 因為出來是 One-Hot Code，最終還是要用 priority encoder 
+    /* 這裡不選擇單純採用 LOD 畢竟出來是 One-Hot Code，最終還是要用 priority encoder 
     function automatic [`MIN_WIDTH-1:0] LOD
         input [`MIN_WIDTH-1:0] In;
         logic [`MIN_WIDTH-1:1] MUX_TEMP;

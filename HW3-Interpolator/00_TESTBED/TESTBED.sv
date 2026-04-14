@@ -15,6 +15,18 @@
 
 module TESTBED();
 
+    `ifdef GATE_SIM
+        initial begin
+            $display("========================================");
+            $display("       GATE-LEVEL SIMULATION START      ");
+            $display("========================================");        
+        end
+
+        // 03_GATESIM 
+        initial $sdf_annotate("../02_SYN/Netlist/Interpolator.sdf", DUT);
+
+    `endif
+
     logic   clk;
     logic   rst_n;
     logic   IntpIn_valid;
@@ -29,11 +41,11 @@ module TESTBED();
 
     logic   [`MU_WIDTH-1:0] Mu_TEMP [0:`MU_NUM-1];
     logic   [`IO_WIDTH-1:0] IntpIn_Real_TEMP [0:`TESTCASE-1];
-    logic   [`IO_WIDTH-1:0] IntpOut_Real_TEMP [0:(`TESTCASE-2)*`MU_NUM-1];   // 88 個點
-    logic   [`IO_WIDTH-1:0] IntpOut_Real_GOLDEN [0:(`TESTCASE-2)*`MU_NUM-1]; // 88 個點
+    logic   [`IO_WIDTH-1:0] IntpOut_Real_TEMP [0:(`TESTCASE-2)*`MU_NUM-1];  
+    logic   [`IO_WIDTH-1:0] IntpOut_Real_GOLDEN [0:(`TESTCASE-2)*`MU_NUM-1]; 
     logic   [`IO_WIDTH-1:0] IntpIn_Imag_TEMP [0:`TESTCASE-1];
-    logic   [`IO_WIDTH-1:0] IntpOut_Imag_TEMP [0:(`TESTCASE-2)*`MU_NUM-1];   // 88 個點
-    logic   [`IO_WIDTH-1:0] IntpOut_Imag_GOLDEN [0:(`TESTCASE-2)*`MU_NUM-1]; // 88 個點
+    logic   [`IO_WIDTH-1:0] IntpOut_Imag_TEMP [0:(`TESTCASE-2)*`MU_NUM-1];  
+    logic   [`IO_WIDTH-1:0] IntpOut_Imag_GOLDEN [0:(`TESTCASE-2)*`MU_NUM-1];
     
     initial begin
         $readmemh({`Path, "mu_in.dat"}, Mu_TEMP);
@@ -43,19 +55,28 @@ module TESTBED();
         $readmemh({`Path, "golden_imag.dat"}, IntpOut_Imag_GOLDEN);
     end
 
+    // Clock Generation
     always #(`CLK_DIV2) clk = ~clk;
 
+    // Test Sequence
     initial begin
+        // Initialize and Reset
         RESET_ALL();
-        @(negedge clk) rst_n = 0;
-        @(negedge clk) rst_n = 1;
-        INPUT_GEN();
-        wait(!IntpOut_valid);
-        CHECK_RESULT();
-        WRITE_OUTPUT();
-        #100 $finish;
+
+        // Reset pulse
+        repeat(2) @(negedge clk) rst_n = ~rst_n;
+        
+        // Generate input and check output
+        INPUT_GEN(); 
+        wait(!IntpOut_valid);   
+        CHECK_RESULT();       
+
+        // Write output to file for further analysis
+        WRITE_OUTPUT();    
+        #100 $finish;      
     end
 
+    // Capture output for checking
     initial begin
         wait(IntpOut_valid);
         for(int i=0; i<(`TESTCASE-2)*`MU_NUM; i++) begin
@@ -65,6 +86,7 @@ module TESTBED();
         end
     end
 
+    // Timing WatchDog
     initial begin
         #100000;
         $display("========================================");
@@ -73,6 +95,7 @@ module TESTBED();
         #10 $finish;
     end
 
+    // Tasks For Test Sequence
     task RESET_ALL;
         begin
             clk = 0;
@@ -147,34 +170,30 @@ module TESTBED();
                 $fwrite(fd, "%h\n", IntpOut_Real_TEMP[i]);
             end
             $fclose(fd);
-            $display("    Output written to output_real.dat   ");
-            $display("========================================");
             fd = $fopen({`Path, "output_imag.dat"}, "w");
             for(int i=0; i<(`TESTCASE-2)*`MU_NUM; i++) begin
                 $fwrite(fd, "%h\n", IntpOut_Imag_TEMP[i]);
             end
             $fclose(fd);
+            $display("========================================");
+            $display("    Output written to output_real.dat   ");
             $display("    Output written to output_imag.dat   ");
             $display("========================================");
         end
     endtask
 
+    // Waveform Dump (fsdb)
     initial begin
         $fsdbDumpfile("wave.fsdb");
         $fsdbDumpvars(0, TESTBED);
         $fsdbDumpMDA;
     end
+    
+    // Property Setting for Assertion (設定一個簡單的 Property)
+    property output_clear; // 當 IntpOut_valid 從 1 跌到 0 的時候，下一個 Cycle 輸出應該被清零
+          @(posedge clk) $fell(IntpOut_valid) |=> (IntpOut_Real === '0) && (IntpOut_Imag === '0);
+    endproperty
 
-`ifdef GATE_SIM
-    initial begin
-        $display("========================================");
-        $display("       GATE-LEVEL SIMULATION START      ");
-        $display("========================================");        
-    end
-
-    // 03_GATESIM 
-    initial $sdf_annotate("../02_SYN/Netlist/Interpolator.sdf", DUT);
-
-`endif
+    assert property (output_clear);
 
 endmodule

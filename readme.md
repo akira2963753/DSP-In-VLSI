@@ -49,7 +49,7 @@ vcs -full64 -debug_access+all -R +v2k -f file.f +neg_tchk +sdfverbose -sdf max:I
 
 | Lab | DSP IP | Area | Clock Frequency | Process | Report |
 |:---:|:-------|-----:|:---------------:|:-------:|:------:|
-| 1 | [Sorter](./HW1-Sorter) | 16942 µm² | 333 MHz | TSMC 90nm | [Report](./HW1-Sorter/HW1_Sorter.pdf) |
+| 1 | [Sorter](./HW1-Sorter) | 665 µm² | 1 GHz | TSMC 16nm (ADFP) | [Report](./HW1-Sorter/HW1_Sorter.pdf) |
 | 2 | [Digital Filter](./HW2-Digital_Filter) | 2943 µm² | 1 GHz | TSMC 16nm (ADFP) | [Report](./HW2-Digital_Filter/HW2_Digital_Filter.pdf) |
-| 3 | [Interpolator](./HW3-Interpolator) | 4061 µm² | 1.25 GHz| TSMC 16nm (ADFP)| [Report](./HW3-Interpolator/HW3_Interpolator.pdf)|
+| 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz| TSMC 16nm (ADFP)| [Report](./HW3-Interpolator/HW3_Interpolator.pdf)|
 

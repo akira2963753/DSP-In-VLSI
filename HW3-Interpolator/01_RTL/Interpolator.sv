@@ -196,8 +196,8 @@ module Common_Logic(
             V2 = BF16_ADD(XM2_0_5, {1'b1 ^ IntpIn_Reg[1][`IO_WIDTH-1], IntpIn_Reg[1][`IO_WIDTH-2:0]});
             V2 = BF16_ADD(V2, XM_0_5);
             uV2 = BF16_MUL(V2, Mu_Reg);
-            // 2 * X(m+1) = X(m+1) + X(m+1)
-            XM1_2 = BF16_ADD(IntpIn_Reg[1], IntpIn_Reg[1]);
+            // 2 * X(m+1)
+            XM1_2 = BF16_DOUBLE(IntpIn_Reg[1]);
             // 1.5 * X(m) = X(m) 0.5 * X(m)
             XM_1_5 = BF16_ADD(IntpIn_Reg[2], XM_0_5);
 
