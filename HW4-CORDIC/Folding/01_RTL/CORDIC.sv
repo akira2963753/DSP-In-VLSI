@@ -35,7 +35,6 @@ module CORDIC(
     logic signed [`DATA_W-1:0] XN;
     logic signed [`DATA_W-1:0] YN;
 
-
     always_ff @(posedge clk or negedge rst_n) begin : FSM_FF
         if(!rst_n) state <= IDLE;
         else state <= next_state;

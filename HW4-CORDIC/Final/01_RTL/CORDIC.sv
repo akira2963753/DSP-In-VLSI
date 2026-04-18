@@ -12,7 +12,7 @@
 `timescale 1ps/1ps
 `include "define.vh"
 
-module CORDIC_UF(
+module CORDIC(
     input   clk,
     input   rst_n,
     input   InValid,
@@ -21,7 +21,7 @@ module CORDIC_UF(
     output  logic   signed  [`DATA_W-1:0]   OutX,
     output  logic   signed  [`DATA_W-1:0]   OutY,
     output  logic   signed  [`THETA_W-1:0]  OutTheta,
-    output  logic   signed  [`DATA_W-1:0]   Magnitude,
+    output  logic   signed  [`MAG_W-1:0]    Magnitude,
     output  logic   OutValid
     );
 
@@ -41,11 +41,12 @@ module CORDIC_UF(
     logic signed [`DATA_W-1:0] DX [0:`PIPE_STAGE-1];  
     logic signed [`DATA_W-1:0] DY [0:`PIPE_STAGE-1];
     logic signed [`THETA_W-1:0] Theta [0:`PIPE_STAGE-1];
-    // 如果怕 Overflow 可以多給一個位元，但是這個作業來說不會溢出
-    logic signed [`DATA_W-1:0] A;
-    logic signed [`DATA_W-1:0] B;
 
-    // Initial Stage → Pipeline Register [0]
+    // Magnitude CSD 計算用，輸出格式 1S 1I 9F
+    logic signed [`MAG_W-1:0] A;
+    logic signed [`MAG_W-1:0] B;
+
+    // Initial Stage to Pipeline Register [0]
     always_ff @(posedge clk or negedge rst_n) begin : INITIAL_STAGE
         if(!rst_n) begin
             Valid[0] <= 0;
@@ -73,7 +74,7 @@ module CORDIC_UF(
     end
 
     // Iteration Stages + Pipeline Registers [這邊我把需要重複寫的 Pipelined 邏輯都用 Generate 打包起來，並且實現可參數化]
-    localparam J = `ITERATION / `PIPE_STAGE; // 注意 J 必須要整除 
+    localparam J = `ITERATION / `PIPE_STAGE; 
     genvar s;
     generate
         for(s = 0; s < `PIPE_STAGE; s++) begin : PIPE_STAGE_GEN
@@ -118,10 +119,9 @@ module CORDIC_UF(
         end
     endgenerate
 
-    
-    // 使用 CSD of Scaling Factor 算出 Magnitude 
+    // 使用 CSD of Scaling Factor 算出 Magnitude
     assign A = (XN[`PIPE_STAGE-1] >>> 1) + (XN[`PIPE_STAGE-1] >>> 3);
-    assign B = (XN[`PIPE_STAGE-1] >>> 6) + (XN[`PIPE_STAGE-1] >>> 9); 
+    assign B = (XN[`PIPE_STAGE-1] >>> 6) + (XN[`PIPE_STAGE-1] >>> 9);
 
     // Output Stage Register 
     always_ff @(posedge clk or negedge rst_n) begin : OUTPUT_STAGE

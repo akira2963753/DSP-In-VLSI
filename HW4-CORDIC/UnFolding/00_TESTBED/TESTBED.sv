@@ -23,6 +23,12 @@ module TESTBED();
         end
 
         initial $sdf_annotate("../02_SYN/Netlist/CORDIC.sdf", DUT);
+    `else
+        initial begin
+            $display("========================================");
+            $display("       BEHAVIORAL SIMULATION START      ");
+            $display("========================================");
+        end    
     `endif
 
     // Inputs
@@ -37,37 +43,20 @@ module TESTBED();
     wire    signed  [`DATA_W-1:0]   OutY;
     wire    signed  [`THETA_W-1:0]  OutTheta;
     wire    OutValid;
-    wire    signed  [`DATA_W-1:0]   Magnitude;
 
-    always #(`CLOCK_PERIOD/2) clk = ~clk;
+    always #(`CLOCK_DIV) clk = ~clk;
 
     // DUT Instantiation
-    `ifdef UNFOLDING
-        CORDIC_UF DUT (.*);
-        initial begin
-            $display("========================================");
-            $display("     LOAD : CORDIC UNFLODING DESIGN     ");
-            $display("========================================");
-        end
-    `else 
-        CORDIC DUT (.*);
-        initial begin
-            $display("========================================");
-            $display("      LOAD : CORDIC FLODING DESIGN      ");
-            $display("========================================");
-        end
-    `endif
+    CORDIC DUT (.*);
 
     logic signed [`DATA_W-1:0]  X_TEMP [0:`ITERATION-1];
     logic signed [`DATA_W-1:0]  Y_TEMP [0:`ITERATION-1];
-    logic signed [`THETA_W-1:0] THETA_GOLD [0:`ITERATION-1];
     logic signed [`THETA_W-1:0] THETA_TEMP [0:`ITERATION-1];
     logic [3:0] out_cnt;
 
     initial begin
         $readmemb({`PATH,"InX.dat"}, X_TEMP);
         $readmemb({`PATH,"InY.dat"}, Y_TEMP);
-        $readmemb({`PATH,"OutTheta.dat"}, THETA_GOLD);
     end
 
     // FSDB Dump
@@ -92,7 +81,7 @@ module TESTBED();
         repeat(2) @(negedge clk) rst_n = ~rst_n;  // Generate reset pulse
         INPUT_GEN();
         repeat(5) @(negedge clk);  // 確保每一筆 OutTheta 都有被 always block 捕捉到
-        $writememb({`PATH,"OutTheta.dat"}, THETA_TEMP);
+        $writememh({`PATH,"OutTheta.dat"}, THETA_TEMP);
         $display("========================================");
         $display("             SIMULATION END !           ");
         $display("========================================");
@@ -126,14 +115,10 @@ module TESTBED();
                 InValid = 1;
                 InX = X_TEMP[i];
                 InY = Y_TEMP[i];
-                `ifdef UNFOLDING
-                    @(negedge clk); // 2 個 Cycle 送一次輸入
-                    InValid = 0;
-                    InX = 0;
-                    InY = 0; 
-                `else 
-                    repeat(11) @(negedge clk); // 12 個 Cycle 送一次輸入
-                `endif
+                @(negedge clk); // 2 個 Cycle 送一次輸入
+                InValid = 0;
+                InX = 0;
+                InY = 0; 
             end
             InValid = 0;
             InX = 0;
