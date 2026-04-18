@@ -90,7 +90,7 @@ module TESTBED();
         RESET_ALL();
         repeat(2) @(negedge clk) rst_n = ~rst_n;  // Generate reset pulse
         INPUT_GEN();
-        repeat(2) @(negedge clk);  // 等最後一筆 OutTheta 被 always block 捕捉到
+        repeat(5) @(negedge clk);  // 確保每一筆 OutTheta 都有被 always block 捕捉到
         $writememb({`PATH,"OutTheta.dat"}, THETA_TEMP);
         $display("========================================");
         $display("             SIMULATION END !           ");
@@ -110,11 +110,11 @@ module TESTBED();
 
     task RESET_ALL;
         begin
-            clk     = 0;
-            rst_n   = 1;
+            clk = 0;
+            rst_n = 1;
             InValid = 0;
-            InX     = 0;
-            InY     = 0;
+            InX = 0;
+            InY = 0;
         end
     endtask
     
@@ -124,9 +124,12 @@ module TESTBED();
                 @(negedge clk);
                 InValid = 1;
                 InX = X_TEMP[i];
-                InY = Y_TEMP[i]; 
+                InY = Y_TEMP[i];
                 `ifdef UNFOLDING
-                    repeat(2) @(negedge clk); // 3 個 Cycle 送一次輸入
+                    @(negedge clk); // 2 個 Cycle 送一次輸入
+                    InValid = 0;
+                    InX = 0;
+                    InY = 0; 
                 `else 
                     repeat(11) @(negedge clk); // 12 個 Cycle 送一次輸入
                 `endif

@@ -9,4 +9,5 @@
     `define NEG_PI      11'b1_00_11011100   // 1S 2I 8F  (-π ≈ -3.14063)
     `define ITER_CNT_W  $clog2(`ITERATION)
     `define PATH        "../00_TESTBED/src/"
+    `define PIPE_STAGE  2
 `endif

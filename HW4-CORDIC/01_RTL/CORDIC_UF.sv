@@ -7,12 +7,10 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
-* 
+*
 ******************************************************************************/
 `timescale 1ps/1ps
 `include "define.vh"
-
-typedef enum logic [1:0] {IDLE, PROCESSING, OUT} STATETPYE;
 
 module CORDIC_UF(
     input   clk,
@@ -26,113 +24,126 @@ module CORDIC_UF(
     output  logic   OutValid
     );
 
-    STATETPYE state, next_state;
-
-    // REGISTER 
-    logic signed [`THETA_W-1:0] Theta_r;
-    logic signed [`THETA_W-1:0] Theta_a;
-    logic signed [`DATA_W-1:0] XN_r;
-    logic signed [`DATA_W-1:0] YN_r;
-     logic Iter_cnt;
-
-    // NET
-    logic signed [`DATA_W-1:0] XN;
-    logic signed [`DATA_W-1:0] YN;
-    logic signed [`THETA_W-1:0] Theta;
-    logic signed [`DATA_W-1:0] DX;
-    logic signed [`DATA_W-1:0] DY;
-
-    // LUT (ROM)
+    // LUT 
     logic signed [`THETA_W-1:0] Theta_e [0:`ITERATION-1];
 
-    always_ff @(posedge clk or negedge rst_n) begin : FSM_FF
-        if(!rst_n) state <= IDLE;
-        else state <= next_state;
-    end
+    // Registers
+    logic Valid [0:1];  
+    logic signed [`DATA_W-1:0] XN_r [0:`PIPE_STAGE-1];
+    logic signed [`DATA_W-1:0] YN_r [0:`PIPE_STAGE-1];
+    logic signed [`THETA_W-1:0] Theta_r [0:`PIPE_STAGE-1];  
+    logic signed [`THETA_W-1:0] Theta_A [0:`PIPE_STAGE-1];
 
-    always_comb begin : FSM_COMB
-        case(state)
-            IDLE : next_state = (InValid)? PROCESSING : IDLE;
-            PROCESSING : next_state = (Iter_cnt == `ITERATION/5-1)? OUT : PROCESSING;
-            OUT : next_state = IDLE;
-            default : next_state = IDLE;
-        endcase
-    end
+    // Combinational
+    logic signed [`DATA_W-1:0] XN [0:`PIPE_STAGE-1]; 
+    logic signed [`DATA_W-1:0] YN [0:`PIPE_STAGE-1]; 
+    logic signed [`DATA_W-1:0] DX [0:`PIPE_STAGE-1];  
+    logic signed [`DATA_W-1:0] DY [0:`PIPE_STAGE-1];
+    logic signed [`THETA_W-1:0] Theta [0:`PIPE_STAGE-1]; 
 
-    always_ff @(posedge clk or negedge rst_n) begin : ITER_CNT
-        if(!rst_n) Iter_cnt <= 0;
-        else if(state == PROCESSING) Iter_cnt <= Iter_cnt + 1;
-        else Iter_cnt <= 0;
-    end
-
-    always_ff @(posedge clk or negedge rst_n) begin : CORDIC_DATAPATH
+    // Initial Stage → Pipeline Register [0]
+    always_ff @(posedge clk or negedge rst_n) begin : INITIAL_STAGE
         if(!rst_n) begin
-            XN_r <= 0;
-            YN_r <= 0;
-            Theta_r <= 0;
-            Theta_a <= 0;
+            Valid[0] <= 0;
+            XN_r[0] <= 0;
+            YN_r[0] <= 0;
+            Theta_r[0] <= 0;
+            Theta_A[0] <= 0;
         end
-        else if(state == IDLE && InValid) begin
-            if(InX < 0) begin
-                XN_r <= -InX;
-                YN_r <= -InY;
-                Theta_a <= (InY >= 0)? `PI : `NEG_PI;
-            end
-            else begin
-                XN_r <= InX;
-                YN_r <= InY;
-                Theta_a <= 0;
-            end
-            Theta_r <= 0;
-        end
-        else if(state == PROCESSING) begin
-            XN_r <= XN;
-            YN_r <= YN;
-            Theta_r <= Theta;
-        end
-    end
-
-    always_comb begin : ITERATION_UNFOLDING_LOGIC
-        for(int i = 0; i<5; i++) begin
-            if(i==0) begin
-                // 先把位移邏輯做完，避免產生 Data Hazard
-                DX = (YN_r >>> Iter_cnt*5+i);
-                DY = (XN_r >>> Iter_cnt*5+i);
-                if(YN_r[`DATA_W-1]) begin
-                    XN = XN_r - DX;
-                    YN = YN_r + DY;
-                    Theta = Theta_r - Theta_e[Iter_cnt*5+i];                    
+        else begin
+            Valid[0] <= InValid;
+            Theta_r[0] <= 0;
+            if(InValid) begin
+                if(InX < 0) begin
+                    XN_r[0] <= -InX;
+                    YN_r[0] <= -InY;
+                    Theta_A[0] <= (InY >= 0) ? `PI : `NEG_PI;
                 end
                 else begin
-                    XN = XN_r + DX;
-                    YN = YN_r - DY;
-                    Theta = Theta_r + Theta_e[Iter_cnt*5+i];                      
+                    XN_r[0] <= InX;
+                    YN_r[0] <= InY;
+                    Theta_A[0] <= 0;
                 end
-            end
-            else begin
-                // 先把位移邏輯做完，避免產生 Data Hazard
-                DX = (YN >>> Iter_cnt*5+i);
-                DY = (XN >>> Iter_cnt*5+i);
-                if(YN[`DATA_W-1]) begin
-                    XN = XN - DX;
-                    YN = YN + DY;
-                    Theta = Theta - Theta_e[Iter_cnt*5+i];                    
-                end
-                else begin
-                    XN = XN + DX;
-                    YN = YN - DY;
-                    Theta = Theta + Theta_e[Iter_cnt*5+i];                      
-                end                
             end
         end
     end
 
+    // Iteration Stages + Pipeline Registers [這邊我把需要重複寫的 Pipelined 邏輯都用 Generate 打包起來，並且實現可參數化]
+    localparam J = `ITERATION / `PIPE_STAGE; // J 必須要整除 
+    genvar s;
+    generate
+        for(s = 0; s < `PIPE_STAGE; s++) begin : PIPE_STAGE_GEN
+            always_comb begin
+                XN[s] = XN_r[s];
+                YN[s] = YN_r[s];
+                Theta[s] = Theta_r[s];
+                for(int i = 0; i < J; i++) begin
+                    DX[s] = YN[s] >>> (s*J + i);
+                    DY[s] = XN[s] >>> (s*J + i);
+                    if(YN[s][`DATA_W-1]) begin  // YN 為負, mu = +1
+                        XN[s] = XN[s] - DX[s];
+                        YN[s] = YN[s] + DY[s];
+                        Theta[s] = Theta[s] - Theta_e[s*J + i];
+                    end
+                    else begin  // YN 為正, mu = -1
+                        XN[s] = XN[s] + DX[s];
+                        YN[s] = YN[s] - DY[s];
+                        Theta[s] = Theta[s] + Theta_e[s*J + i];
+                    end
+                end
+            end
+            // Pipeline 傳遞
+            if(s < `PIPE_STAGE-1) begin : PIPELINE_REG
+                always_ff @(posedge clk or negedge rst_n) begin
+                    if(!rst_n) begin
+                        Valid[s+1] <= 0;
+                        XN_r[s+1] <= 0;
+                        YN_r[s+1] <= 0;
+                        Theta_r[s+1] <= 0;
+                        Theta_A[s+1] <= 0;
+                    end
+                    else begin
+                        Valid[s+1] <= Valid[s];
+                        XN_r[s+1] <= XN[s];
+                        YN_r[s+1] <= YN[s];
+                        Theta_r[s+1] <= Theta[s];
+                        Theta_A[s+1] <= Theta_A[s];
+                    end
+                end
+            end
+        end
+    endgenerate
+
+    // Output Stage Register 
+    always_ff @(posedge clk or negedge rst_n) begin : OUTPUT_STAGE
+        if(!rst_n) begin
+            OutValid <= 0;
+            OutX <= 0;
+            OutY <= 0;
+            OutTheta <= 0;
+        end
+        else begin
+            OutValid <= Valid[`PIPE_STAGE-1];
+            if(Valid[`PIPE_STAGE-1]) begin
+                OutX <= XN[`PIPE_STAGE-1];
+                OutY <= YN[`PIPE_STAGE-1];
+                OutTheta <= Theta[`PIPE_STAGE-1] + Theta_A[`PIPE_STAGE-1];
+            end
+            else begin
+                OutX <= 0;
+                OutY <= 0;
+                OutTheta <= 0;
+            end
+        end
+    end
+
+    // LUT
     always_comb begin : THETA_E_LUT
-        Theta_e[0] = `THETA_W'b0_00_11001001;  
-        Theta_e[1] = `THETA_W'b0_00_01110111;  
-        Theta_e[2] = `THETA_W'b0_00_00111111; 
-        Theta_e[3] = `THETA_W'b0_00_00100000; 
-        Theta_e[4] = `THETA_W'b0_00_00010000; 
+        Theta_e[0] = `THETA_W'b0_00_11001001;
+        Theta_e[1] = `THETA_W'b0_00_01110111;
+        Theta_e[2] = `THETA_W'b0_00_00111111;
+        Theta_e[3] = `THETA_W'b0_00_00100000;
+        Theta_e[4] = `THETA_W'b0_00_00010000;
         Theta_e[5] = `THETA_W'b0_00_00001000;
         Theta_e[6] = `THETA_W'b0_00_00000100;
         Theta_e[7] = `THETA_W'b0_00_00000010;
@@ -140,24 +151,5 @@ module CORDIC_UF(
         Theta_e[9] = `THETA_W'b0_00_00000000;
     end
 
-    always_ff @(posedge clk) OutValid <= (state == OUT);
-
-    always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin 
-            OutX <= 0;
-            OutY <= 0;
-            OutTheta <= 0;
-        end 
-        else if(state==OUT) begin
-            OutX <= XN_r;
-            OutY <= YN_r;
-            OutTheta <= Theta_r + Theta_a;
-        end
-        else begin
-            OutX <= 0;
-            OutY <= 0;
-            OutTheta <= 0;
-        end
-    end
 
 endmodule
