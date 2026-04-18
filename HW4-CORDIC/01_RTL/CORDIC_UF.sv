@@ -1,9 +1,9 @@
 /******************************************************************************
 * Copyright (C) 2026 Marco
 *
-* File Name:    CORDIC.sv
+* File Name:    CORDIC_UF.sv
 * Project:      [HW4] 2026 Spring DSP In VLSI @NTU <ICDA5003>
-* Module:       CORDIC
+* Module:       CORDIC_UF
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
@@ -14,7 +14,7 @@
 
 typedef enum logic [1:0] {IDLE, PROCESSING, OUT} STATETPYE;
 
-module CORDIC(
+module CORDIC_UF(
     input   clk,
     input   rst_n,
     input   InValid,
@@ -28,13 +28,22 @@ module CORDIC(
 
     STATETPYE state, next_state;
 
-    logic [`ITER_CNT_W-1:0] Iter_cnt;
-    logic signed [`THETA_W-1:0] Theta;
+    // REGISTER 
+    logic signed [`THETA_W-1:0] Theta_r;
     logic signed [`THETA_W-1:0] Theta_a;
-    logic signed [`THETA_W-1:0] Theta_e [0:`ITERATION-1];
+    logic signed [`DATA_W-1:0] XN_r;
+    logic signed [`DATA_W-1:0] YN_r;
+     logic Iter_cnt;
+
+    // NET
     logic signed [`DATA_W-1:0] XN;
     logic signed [`DATA_W-1:0] YN;
+    logic signed [`THETA_W-1:0] Theta;
+    logic signed [`DATA_W-1:0] DX;
+    logic signed [`DATA_W-1:0] DY;
 
+    // LUT (ROM)
+    logic signed [`THETA_W-1:0] Theta_e [0:`ITERATION-1];
 
     always_ff @(posedge clk or negedge rst_n) begin : FSM_FF
         if(!rst_n) state <= IDLE;
@@ -44,7 +53,7 @@ module CORDIC(
     always_comb begin : FSM_COMB
         case(state)
             IDLE : next_state = (InValid)? PROCESSING : IDLE;
-            PROCESSING : next_state = (Iter_cnt == `ITERATION-1)? OUT : PROCESSING;
+            PROCESSING : next_state = (Iter_cnt == `ITERATION/5-1)? OUT : PROCESSING;
             OUT : next_state = IDLE;
             default : next_state = IDLE;
         endcase
@@ -58,34 +67,62 @@ module CORDIC(
 
     always_ff @(posedge clk or negedge rst_n) begin : CORDIC_DATAPATH
         if(!rst_n) begin
-            XN <= 0;
-            YN <= 0;
-            Theta   <= 0;
+            XN_r <= 0;
+            YN_r <= 0;
+            Theta_r <= 0;
             Theta_a <= 0;
         end
         else if(state == IDLE && InValid) begin
             if(InX < 0) begin
-                XN <= -InX;
-                YN <= -InY;
+                XN_r <= -InX;
+                YN_r <= -InY;
                 Theta_a <= (InY >= 0)? `PI : `NEG_PI;
             end
             else begin
-                XN <= InX;
-                YN <= InY;
+                XN_r <= InX;
+                YN_r <= InY;
                 Theta_a <= 0;
             end
-            Theta <= 0;
+            Theta_r <= 0;
         end
         else if(state == PROCESSING) begin
-            if(YN[`DATA_W-1] == 1'b1) begin // YN 為負, Mu 為正
-                XN <= XN - (YN >>> Iter_cnt);
-                YN <= YN + (XN >>> Iter_cnt);
-                Theta <= Theta - Theta_e[Iter_cnt];
+            XN_r <= XN;
+            YN_r <= YN;
+            Theta_r <= Theta;
+        end
+    end
+
+    always_comb begin : ITERATION_UNFOLDING_LOGIC
+        for(int i = 0; i<5; i++) begin
+            if(i==0) begin
+                // 先把位移邏輯做完，避免產生 Data Hazard
+                DX = (YN_r >>> Iter_cnt*5+i);
+                DY = (XN_r >>> Iter_cnt*5+i);
+                if(YN_r[`DATA_W-1]) begin
+                    XN = XN_r - DX;
+                    YN = YN_r + DY;
+                    Theta = Theta_r - Theta_e[Iter_cnt*5+i];                    
+                end
+                else begin
+                    XN = XN_r + DX;
+                    YN = YN_r - DY;
+                    Theta = Theta_r + Theta_e[Iter_cnt*5+i];                      
+                end
             end
-            else begin  // YN 為正, Mu 為負
-                XN <= XN + (YN >>> Iter_cnt);
-                YN <= YN - (XN >>> Iter_cnt);
-                Theta <= Theta + Theta_e[Iter_cnt];
+            else begin
+                // 先把位移邏輯做完，避免產生 Data Hazard
+                DX = (YN >>> Iter_cnt*5+i);
+                DY = (XN >>> Iter_cnt*5+i);
+                if(YN[`DATA_W-1]) begin
+                    XN = XN - DX;
+                    YN = YN + DY;
+                    Theta = Theta - Theta_e[Iter_cnt*5+i];                    
+                end
+                else begin
+                    XN = XN + DX;
+                    YN = YN - DY;
+                    Theta = Theta + Theta_e[Iter_cnt*5+i];                      
+                end                
             end
         end
     end
@@ -112,9 +149,9 @@ module CORDIC(
             OutTheta <= 0;
         end 
         else if(state==OUT) begin
-            OutX <= XN;
-            OutY <= YN;
-            OutTheta <= Theta + Theta_a;
+            OutX <= XN_r;
+            OutY <= YN_r;
+            OutTheta <= Theta_r + Theta_a;
         end
         else begin
             OutX <= 0;

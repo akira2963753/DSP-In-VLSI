@@ -41,13 +41,26 @@ module TESTBED();
     always #(`CLOCK_PERIOD/2) clk = ~clk;
 
     // DUT Instantiation
-    CORDIC DUT (.*);
+    `ifdef UNFOLDING
+        CORDIC_UF DUT (.*);
+        initial begin
+            $display("========================================");
+            $display("     LOAD : CORDIC UNFLODING DESIGN     ");
+            $display("========================================");
+        end
+    `else 
+        CORDIC DUT (.*);
+        initial begin
+            $display("========================================");
+            $display("      LOAD : CORDIC FLODING DESIGN      ");
+            $display("========================================");
+        end
+    `endif
 
     logic signed [`DATA_W-1:0]  X_TEMP [0:`ITERATION-1];
     logic signed [`DATA_W-1:0]  Y_TEMP [0:`ITERATION-1];
     logic signed [`THETA_W-1:0] THETA_GOLD [0:`ITERATION-1];
     logic signed [`THETA_W-1:0] THETA_TEMP [0:`ITERATION-1];
-
     logic [3:0] out_cnt;
 
     initial begin
@@ -55,7 +68,6 @@ module TESTBED();
         $readmemb({`PATH,"InY.dat"}, Y_TEMP);
         $readmemb({`PATH,"OutTheta.dat"}, THETA_GOLD);
     end
-
 
     // FSDB Dump
     initial begin
@@ -80,6 +92,9 @@ module TESTBED();
         INPUT_GEN();
         repeat(2) @(negedge clk);  // 等最後一筆 OutTheta 被 always block 捕捉到
         $writememb({`PATH,"OutTheta.dat"}, THETA_TEMP);
+        $display("========================================");
+        $display("             SIMULATION END !           ");
+        $display("========================================");
         #100 $finish;
     end
 
@@ -110,7 +125,11 @@ module TESTBED();
                 InValid = 1;
                 InX = X_TEMP[i];
                 InY = Y_TEMP[i]; 
-                repeat(11) @(negedge clk); // 12 個 Cycle 送一次輸入
+                `ifdef UNFOLDING
+                    repeat(2) @(negedge clk); // 3 個 Cycle 送一次輸入
+                `else 
+                    repeat(11) @(negedge clk); // 12 個 Cycle 送一次輸入
+                `endif
             end
             InValid = 0;
             InX = 0;
