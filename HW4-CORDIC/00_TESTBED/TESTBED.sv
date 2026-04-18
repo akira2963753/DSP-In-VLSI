@@ -37,6 +37,7 @@ module TESTBED();
     wire    signed  [`DATA_W-1:0]   OutY;
     wire    signed  [`THETA_W-1:0]  OutTheta;
     wire    OutValid;
+    wire    signed  [`DATA_W-1:0]   Magnitude;
 
     always #(`CLOCK_PERIOD/2) clk = ~clk;
 
