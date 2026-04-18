@@ -151,5 +151,4 @@ module CORDIC_UF(
         Theta_e[9] = `THETA_W'b0_00_00000000;
     end
 
-
 endmodule
