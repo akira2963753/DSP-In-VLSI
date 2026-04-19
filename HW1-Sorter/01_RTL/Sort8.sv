@@ -7,7 +7,7 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         Vivado 2025.1
-* 
+*
 ******************************************************************************/
 
 module Sort8 (
@@ -17,20 +17,20 @@ module Sort8 (
     output signed [8:0] out0, out1, out2, out3, out4, out5, out6, out7);
 
 
-    integer i;
+    int i;
 
-    wire signed [8:0] s1_out [0:7];
-    wire signed [8:0] s2_out [0:7];
-    reg  signed [8:0] s2_out_reg [0:7];
-    wire signed [8:0] s3_out [0:7];
-    wire signed [8:0] s4_out [0:7];
-    reg  signed [8:0] s4_out_reg [0:7];
-    wire signed [8:0] s5_out [0:7];
+    logic signed [8:0] s1_out [0:7];
+    logic signed [8:0] s2_out [0:7];
+    logic signed [8:0] s2_out_reg [0:7];
+    logic signed [8:0] s3_out [0:7];
+    logic signed [8:0] s4_out [0:7];
+    logic signed [8:0] s4_out_reg [0:7];
+    logic signed [8:0] s5_out [0:7];
 
     // Bitonic Sorter for 8 elements
 
     // Pipeline registers for Stage 2 and Stage 4 outputs
-    always @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             for(i=0; i<8; i=i+1) s2_out_reg[i] <= 0;
             for(i=0; i<8; i=i+1) s4_out_reg[i] <= 0;
@@ -39,7 +39,7 @@ module Sort8 (
             for(i=0; i<8; i=i+1) s2_out_reg[i] <= s2_out[i];
             for(i=0; i<8; i=i+1) s4_out_reg[i] <= s4_out[i];
         end
-    end   
+    end
 
     // Stage 1
     CAS Stage1_0(in0, in1, 1'd1, s1_out[0], s1_out[1]);
@@ -51,7 +51,7 @@ module Sort8 (
     CAS Stage2_0(s1_out[0], s1_out[2], 1'd1, s2_out[0], s2_out[2]);
     CAS Stage2_1(s1_out[1], s1_out[3], 1'd1, s2_out[1], s2_out[3]);
     CAS Stage2_2(s1_out[4], s1_out[6], 1'd0, s2_out[4], s2_out[6]);
-    CAS Stage2_3(s1_out[5], s1_out[7], 1'd0, s2_out[5], s2_out[7]); 
+    CAS Stage2_3(s1_out[5], s1_out[7], 1'd0, s2_out[5], s2_out[7]);
 
     // Stage 3
     CAS Stage3_0(s2_out_reg[0], s2_out_reg[1], 1'd1, s3_out[0], s3_out[1]);
@@ -82,9 +82,9 @@ endmodule
 module CAS(
     input signed [8:0] in0, in1,
     input sel, // 0 : Ascending, 1 : Descending
-    output reg signed [8:0] out0, out1);
+    output logic signed [8:0] out0, out1);
 
-    always @(*) begin
+    always_comb begin
         if(in0 < in1) begin
             if(sel) begin
                 out0 = in1;

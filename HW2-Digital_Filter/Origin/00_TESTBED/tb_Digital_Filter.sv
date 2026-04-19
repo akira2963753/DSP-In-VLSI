@@ -7,7 +7,7 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
-* 
+*
 ******************************************************************************/
 `timescale 1ns/1ps
 `define X_WIDTH     16    // FilterIn Width
@@ -18,19 +18,19 @@
 
 module tb_Digital_Filter();
 
-    reg clk;
-    reg rst_n;
-    reg signed [`X_WIDTH-1:0] FilterIn;
-    reg ValidIn;
-    wire signed [`Y_WIDTH-1:0] FilterOut;
-    wire ValidOut;
-    reg [7:0] OUTPUT_CNT;
+    logic clk;
+    logic rst_n;
+    logic signed [`X_WIDTH-1:0] FilterIn;
+    logic ValidIn;
+    logic signed [`Y_WIDTH-1:0] FilterOut;
+    logic ValidOut;
+    logic [7:0] OUTPUT_CNT;
 
-    integer i,j;
+    int i, j;
     integer output_file;
     Digital_Filter DUT(.*);
 
-    reg signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
+    logic signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
     initial $readmemb({`SRC_PATH ,"input.dat"},IN_TEMP);
 
     always #(`CYCLE/2) clk = ~clk;

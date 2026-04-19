@@ -7,7 +7,7 @@
 * Author:       Marco
 * Student ID:   M11407439
 * Tool:         Vivado
-* 
+*
 *****************************************************************************/
 `timescale 1ns/1ps
 `define TEST_CASE 4
@@ -15,12 +15,13 @@
 
 module tb_SelectTopK();
 
-    reg clk, rst_n, Blk_In;
-    reg signed [8:0] in[0:7];
-    wire signed [8:0] SortOut;
-    wire [1:0] OutRank;
+    logic clk, rst_n, Blk_In;
+    logic signed [8:0] in[0:7];
+    logic signed [8:0] SortOut;
+    logic [1:0] OutRank;
 
-    integer i,j,file;
+    int i, j;
+    integer file;
 
     SelectTopK DUT(
         .clk(clk),
@@ -53,7 +54,7 @@ module tb_SelectTopK();
             $finish;
         end
         for(j=0; j<`TEST_CASE; j=j+1) Input_Data();
-        @(negedge clk) for(i=0; i<8; i=i+1) in[i] = 0; 
+        @(negedge clk) for(i=0; i<8; i=i+1) in[i] = 0;
         $fclose(file);
         #100 $finish;
     end
@@ -73,7 +74,7 @@ module tb_SelectTopK();
 
     task Random_Input_Gen;
         begin
-            for(i=0; i<8; i=i+1) begin 
+            for(i=0; i<8; i=i+1) begin
                 in[i] = ($random & 9'h1FF) - 256;
                 $fdisplay(file, "%0d", $signed(in[i]));
             end

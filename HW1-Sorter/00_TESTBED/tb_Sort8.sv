@@ -1,5 +1,5 @@
 /******************************************************************************
-* Copyright (C) 2026 Marco 
+* Copyright (C) 2026 Marco
 *
 * File Name:    tb_Sort8.v
 * Project:      [HW1] 2026 Spring DSP In VLSI @NTU <ICDA5003>
@@ -7,21 +7,21 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         Vivado 2025.1
-* 
+*
 ******************************************************************************/
 `define TEST_CASE 100
 module tb_Sort8();
 
-    reg clk;
-    reg rst_n;
-    reg signed [8:0] In[0:7];
-    wire signed [8:0] Out[0:7];
+    logic clk;
+    logic rst_n;
+    logic signed [8:0] In[0:7];
+    logic signed [8:0] Out[0:7];
 
     Sort8 DUT(In[0], In[1], In[2], In[3], In[4], In[5], In[6], In[7],
               clk, rst_n,
               Out[0], Out[1], Out[2], Out[3], Out[4], Out[5], Out[6], Out[7]);
 
-    integer i,j;
+    int i, j;
 
     always #5 clk = ~clk;
 
@@ -41,10 +41,10 @@ module tb_Sort8();
 
     task Radnom_Input_Gen;
         begin
-             @(negedge clk);
+            @(negedge clk);
             for(i=0; i<8; i=i+1) begin
                 In[i] = ($random & 9'h1FF) - 256;
-            end        
+            end
         end
     endtask
 
@@ -54,7 +54,7 @@ module tb_Sort8();
                 if(Out[i] < Out[i+1]) begin
                     $display("Test Fail !!");
                     #10 $finish;
-                end 
+                end
             end
             #10;
         end

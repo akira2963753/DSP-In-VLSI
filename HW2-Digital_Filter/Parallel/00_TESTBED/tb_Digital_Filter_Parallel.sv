@@ -7,7 +7,7 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
-* 
+*
 ******************************************************************************/
 
 `timescale 1ns/1ps
@@ -21,22 +21,22 @@
 module tb_Digital_Filter_Parallel;
 
     // DUT Signals
-    reg                                 clk;
-    reg                                 rst_n;
-    reg     signed    [`X_WIDTH-1:0]    FilterIn0;
-    reg     signed    [`X_WIDTH-1:0]    FilterIn1;
-    reg                                 ValidIn;
-    wire    signed    [`Y_WIDTH-1:0]    FilterOut0;
-    wire    signed    [`Y_WIDTH-1:0]    FilterOut1;
-    wire                                ValidOut;
+    logic                               clk;
+    logic                               rst_n;
+    logic   signed  [`X_WIDTH-1:0]      FilterIn0;
+    logic   signed  [`X_WIDTH-1:0]      FilterIn1;
+    logic                               ValidIn;
+    logic   signed  [`Y_WIDTH-1:0]      FilterOut0;
+    logic   signed  [`Y_WIDTH-1:0]      FilterOut1;
+    logic                               ValidOut;
 
-    integer i,j;
+    int i, j;
     integer output_file;
     Digital_Filter_Parallel DUT(.*);
 
-    reg signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
-    reg [7:0] OUTPUT_CNT0;
-    reg [7:0] OUTPUT_CNT1;
+    logic signed [`X_WIDTH-1:0] IN_TEMP [0:`X_NUM-1];
+    logic [7:0] OUTPUT_CNT0;
+    logic [7:0] OUTPUT_CNT1;
 
     initial $readmemb({`SRC_PATH, "input.dat"},IN_TEMP);
     always #(`CYCLE/2) clk = ~clk;

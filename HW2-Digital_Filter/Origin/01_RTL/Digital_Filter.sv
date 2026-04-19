@@ -7,46 +7,46 @@
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
-* 
+*
 ******************************************************************************/
 `timescale 1ns/1ps
 
 `define X_WIDTH     16    // FilterIn Width (Q3.13)
-`define H_WIDTH     17    // Coefficient Width (Q2.15) -> Q6.28 
-`define H_NUM       25    
+`define H_WIDTH     17    // Coefficient Width (Q2.15) -> Q6.28
+`define H_NUM       25
 `define MUL_WIDTH   20    // Mul Result Width (Q3.17)
 `define Y_WIDTH     21    // FilterOut Width (Q4.17)
 `define PIPE_STAGE  4
 
 module Digital_Filter (
-    input   wire                            clk,
-    input   wire                            rst_n,
-    input   wire    signed  [`X_WIDTH-1:0]  FilterIn,
-    input   wire                            ValidIn,
-    output  reg     signed  [`Y_WIDTH-1:0]  FilterOut,
-    output  wire                            ValidOut
+    input   logic                           clk,
+    input   logic                           rst_n,
+    input   logic   signed  [`X_WIDTH-1:0]  FilterIn,
+    input   logic                           ValidIn,
+    output  logic   signed  [`Y_WIDTH-1:0]  FilterOut,
+    output  logic                           ValidOut
     );
 
-    integer i;
+    int i;
     genvar  n;
-    localparam      IDLE    =   1'd0, 
+    localparam      IDLE    =   1'd0,
                     OUT     =   1'd1;
-    reg             state, next_state;
-    reg     [2:0]   cnt;
+    logic           state, next_state;
+    logic   [2:0]   cnt;
 
-    wire    signed  [`H_WIDTH-1:0]   H   [0:`H_NUM-1];
-    reg     signed  [`X_WIDTH-1:0]   X_D [0:`H_NUM-1];
-    reg     signed  [`MUL_WIDTH-1:0] MUL [0:`H_NUM-1];
-    reg     signed  [`X_WIDTH+`H_WIDTH:0] FULL_MUL [0:`H_NUM-1]; // Q6.28
+    logic   signed  [`H_WIDTH-1:0]   H   [0:`H_NUM-1];
+    logic   signed  [`X_WIDTH-1:0]   X_D [0:`H_NUM-1];
+    logic   signed  [`MUL_WIDTH-1:0] MUL [0:`H_NUM-1];
+    logic   signed  [`X_WIDTH+`H_WIDTH:0] FULL_MUL [0:`H_NUM-1]; // Q6.28
 
-    // Five Stage Pipelined Stage 
-    wire    signed  [`X_WIDTH-1:0] X_REG_OUT [0:`PIPE_STAGE-1];
-    reg     signed  [`Y_WIDTH-1:0] Y_REG_IN  [0:`PIPE_STAGE-1];
-    wire    signed  [`Y_WIDTH-1:0] Y_REG_OUT [0:`PIPE_STAGE-1];
-    reg     [`PIPE_STAGE-1:0] ValidOut_REG;
+    // Five Stage Pipelined Stage
+    logic   signed  [`X_WIDTH-1:0] X_REG_OUT [0:`PIPE_STAGE-1];
+    logic   signed  [`Y_WIDTH-1:0] Y_REG_IN  [0:`PIPE_STAGE-1];
+    logic   signed  [`Y_WIDTH-1:0] Y_REG_OUT [0:`PIPE_STAGE-1];
+    logic   [`PIPE_STAGE-1:0] ValidOut_REG;
 
     generate
-        for(n=0; n<`PIPE_STAGE; n=n+1) begin : Stage 
+        for(n=0; n<`PIPE_STAGE; n=n+1) begin : Stage
             Pipelined_Stage Pipe_Inst(
                 .clk(clk),
                 .rst_n(rst_n),
@@ -57,8 +57,8 @@ module Digital_Filter (
         end
     endgenerate
 
-    always @(posedge clk or negedge rst_n) begin 
-        if(!rst_n) for(i=0; i<`H_NUM; i=i+1) X_D[i] <= 0;  
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) for(i=0; i<`H_NUM; i=i+1) X_D[i] <= 0;
         else if(ValidIn||state==OUT) begin // Shift Register
             // Five Stage Pipeline
             X_D[0] <= FilterIn;
@@ -70,60 +70,60 @@ module Digital_Filter (
             for(i=5; i<9; i=i+1) X_D[i+1] <= X_D[i];
             for(i=10; i<14; i=i+1) X_D[i+1] <= X_D[i];
             for(i=15; i<19; i=i+1) X_D[i+1] <= X_D[i];
-            for(i=20; i<24; i=i+1) X_D[i+1] <= X_D[i];            
+            for(i=20; i<24; i=i+1) X_D[i+1] <= X_D[i];
         end
         else X_D[0] <= 0; // Reset to Zero
     end
 
-    always @(*) begin
+    always_comb begin
         for(i=0;i<`H_NUM; i=i+1) begin
             FULL_MUL[i] = X_D[i] * H[i];
-            MUL[i] = FULL_MUL[i][`X_WIDTH+`H_WIDTH-3 -: `MUL_WIDTH]; 
+            MUL[i] = FULL_MUL[i][`X_WIDTH+`H_WIDTH-3 -: `MUL_WIDTH];
         end
     end
 
-    always @(*) begin
+    always_comb begin
         for(i=0; i<5; i=i+1) begin
-            if(i==0) Y_REG_IN[0] = {MUL[0][`MUL_WIDTH-1],MUL[0]}; 
+            if(i==0) Y_REG_IN[0] = {MUL[0][`MUL_WIDTH-1],MUL[0]};
             else Y_REG_IN[0] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[0];
         end
         for(i=5; i<10; i=i+1) begin
-            if(i==5) Y_REG_IN[1] = Y_REG_OUT[0] + {MUL[5][`MUL_WIDTH-1],MUL[5]};  
-            else Y_REG_IN[1] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[1];          
+            if(i==5) Y_REG_IN[1] = Y_REG_OUT[0] + {MUL[5][`MUL_WIDTH-1],MUL[5]};
+            else Y_REG_IN[1] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[1];
         end
         for(i=10; i<15; i=i+1) begin
-            if(i==10) Y_REG_IN[2] = Y_REG_OUT[1] + {MUL[10][`MUL_WIDTH-1],MUL[10]}; 
-            else Y_REG_IN[2] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[2];          
+            if(i==10) Y_REG_IN[2] = Y_REG_OUT[1] + {MUL[10][`MUL_WIDTH-1],MUL[10]};
+            else Y_REG_IN[2] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[2];
         end
         for(i=15; i<20; i=i+1) begin
-            if(i==15) Y_REG_IN[3] = Y_REG_OUT[2] + {MUL[15][`MUL_WIDTH-1],MUL[15]}; 
-            else Y_REG_IN[3] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[3];          
+            if(i==15) Y_REG_IN[3] = Y_REG_OUT[2] + {MUL[15][`MUL_WIDTH-1],MUL[15]};
+            else Y_REG_IN[3] = {MUL[i][`MUL_WIDTH-1],MUL[i]} + Y_REG_IN[3];
         end
         for(i=20; i<25; i=i+1) begin
-            if(i==20) FilterOut = Y_REG_OUT[3] + {MUL[20][`MUL_WIDTH-1],MUL[20]}; 
-            else FilterOut = {MUL[i][`MUL_WIDTH-1],MUL[i]} + FilterOut;          
+            if(i==20) FilterOut = Y_REG_OUT[3] + {MUL[20][`MUL_WIDTH-1],MUL[20]};
+            else FilterOut = {MUL[i][`MUL_WIDTH-1],MUL[i]} + FilterOut;
         end
     end
 
-    always @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) cnt <= 0;
         else if(state==OUT && !ValidIn) cnt <= cnt + 1;
-        else cnt <= 0; 
+        else cnt <= 0;
     end
 
-    always @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) state <= IDLE;
         else state <= next_state;
     end
 
-    always @(*) begin
+    always_comb begin
         case(state)
             IDLE : next_state = (ValidIn)? OUT : IDLE;
-            OUT : next_state = (cnt==3'd4)? IDLE : OUT;
+            OUT  : next_state = (cnt==3'd4)? IDLE : OUT;
         endcase
     end
 
-    always @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) ValidOut_REG <= 0;
         else begin
             ValidOut_REG[0] <= (state==OUT);
@@ -157,27 +157,27 @@ module Digital_Filter (
 	assign H[21] = 25'b0000000011110010011010110;
 	assign H[22] = 25'b0000000011110101011010100;
 	assign H[23] = 25'b0000000011111010011100011;
-	assign H[24] = 25'b0000000011111111111111111;    
-    
+	assign H[24] = 25'b0000000011111111111111111;
+
 endmodule
 
 module Pipelined_Stage (
-    input   wire    clk,
-    input   wire    rst_n,
-    input   wire    signed  [`X_WIDTH-1:0]  X_IN,
-    input   wire    signed  [`Y_WIDTH-1:0]  Y_IN,
-    output  reg     signed  [`X_WIDTH-1:0]  X_OUT,
-    output  reg     signed  [`Y_WIDTH-1:0]  Y_OUT);
+    input   logic   clk,
+    input   logic   rst_n,
+    input   logic   signed  [`X_WIDTH-1:0]  X_IN,
+    input   logic   signed  [`Y_WIDTH-1:0]  Y_IN,
+    output  logic   signed  [`X_WIDTH-1:0]  X_OUT,
+    output  logic   signed  [`Y_WIDTH-1:0]  Y_OUT);
 
-    always @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin 
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
             X_OUT <= 0;
             Y_OUT <= 0;
         end
         else begin
             X_OUT <= X_IN;
             Y_OUT <= Y_IN;
-        end 
+        end
     end
-    
+
 endmodule
