@@ -1,9 +1,9 @@
 /******************************************************************************
 * Copyright (C) 2026 Marco
 *
-* File Name:    CORDIC_UF.sv
+* File Name:    CORDIC.sv
 * Project:      [HW4] 2026 Spring DSP In VLSI @NTU <ICDA5003>
-* Module:       CORDIC_UF
+* Module:       CORDIC
 * Author:       Marco <harry2963753@gmail.com>
 * Student ID:   M11407439
 * Tool:         VCS & Verdi
