@@ -73,7 +73,8 @@ module CORDIC(
         end
     end
 
-    // Iteration Stages + Pipeline Registers [這邊我把需要重複寫的 Pipelined 邏輯都用 Generate 打包起來，並且實現可參數化]
+    // Iteration Stages + Pipeline Registers 
+    // 這邊我把需要重複寫的 Pipelined 跟 Unfolding 邏輯都用 Generate 打包起來，並且實現可參數化
     localparam J = `ITERATION / `PIPE_STAGE; 
     genvar s;
     generate
