@@ -90,16 +90,18 @@ module CORDIC(
     end
 
     always_comb begin : THETA_E_LUT
-        Theta_e[0] = `THETA_W'b0_00_11001001;  
-        Theta_e[1] = `THETA_W'b0_00_01110111;  
-        Theta_e[2] = `THETA_W'b0_00_00111111; 
-        Theta_e[3] = `THETA_W'b0_00_00100000; 
-        Theta_e[4] = `THETA_W'b0_00_00010000; 
-        Theta_e[5] = `THETA_W'b0_00_00001000;
-        Theta_e[6] = `THETA_W'b0_00_00000100;
-        Theta_e[7] = `THETA_W'b0_00_00000010;
-        Theta_e[8] = `THETA_W'b0_00_00000001;
-        Theta_e[9] = `THETA_W'b0_00_00000000;
+        Theta_e[0]  = `THETA_W'b0_00_1100100100;
+        Theta_e[1]  = `THETA_W'b0_00_0111011011;
+        Theta_e[2]  = `THETA_W'b0_00_0011111011;
+        Theta_e[3]  = `THETA_W'b0_00_0001111111;
+        Theta_e[4]  = `THETA_W'b0_00_0001000000;
+        Theta_e[5]  = `THETA_W'b0_00_0000100000;
+        Theta_e[6]  = `THETA_W'b0_00_0000010000;
+        Theta_e[7]  = `THETA_W'b0_00_0000001000;
+        Theta_e[8]  = `THETA_W'b0_00_0000000100;
+        Theta_e[9]  = `THETA_W'b0_00_0000000010;
+        Theta_e[10] = `THETA_W'b0_00_0000000001;
+        Theta_e[11] = `THETA_W'b0_00_0000000000;
     end
 
     always_ff @(posedge clk) OutValid <= (state == OUT);
