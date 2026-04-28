@@ -110,7 +110,7 @@
         <mxCell id="PG19WhLdtKABWhaEYWJd-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=default;strokeWidth=2;container=0;" value="&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Comic Sans MS&quot;&gt;Adder&lt;/font&gt;" vertex="1">
           <mxGeometry height="72.13114754098362" width="48" x="1020.5" y="317.54098360655735" as="geometry" />
         </mxCell>
-        <mxCell id="PG19WhLdtKABWhaEYWJd-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=default;container=0;" value="&lt;font style=&quot;font-size: 17px;&quot; face=&quot;Georgia&quot;&gt;&lt;b style=&quot;&quot;&gt;-&lt;/b&gt;&lt;/font&gt;" vertex="1">
+        <mxCell id="PG19WhLdtKABWhaEYWJd-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=default;container=0;" value="&lt;font style=&quot;font-size: 20px;&quot; face=&quot;Georgia&quot;&gt;&lt;b style=&quot;&quot;&gt;-&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="13.114754098360656" width="13.714285714285714" x="972.5" y="394.2622950819673" as="geometry" />
         </mxCell>
         <mxCell id="PG19WhLdtKABWhaEYWJd-18" parent="1" style="text;whiteSpace=wrap;fontFamily=Comic Sans MS;fontSize=12;fontStyle=1;fontColor=#383838;container=0;" value="Shift-and-Add Module" vertex="1">
