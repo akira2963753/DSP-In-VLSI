@@ -1,0 +1,19 @@
+\contentsline {chapter}{\numberline {1}Step 1 — Realize CORDIC properties}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Result 1 - CORDIC scaling factor}{2}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Step 2 — Determine the word-length of fixed-point representation}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Result 2 - Word-length setting}{3}{section.2.1}%
+\contentsline {chapter}{\numberline {3}Step 3 — Determine the number of micro rotations for arctangent function}{4}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Result 3 - Micro-rotations and elementary angles}{4}{section.3.1}%
+\contentsline {chapter}{\numberline {4}Step 4 — Determine the number of micro rotations for magnitude function}{6}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Result 4 - Number of micro-rotations for magnitude function}{6}{section.4.1}%
+\contentsline {chapter}{\numberline {5}Step 5 — Determine the CSD of the scaling factor}{7}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Result 5 - CSD representation and shift-and-add block}{7}{section.5.1}%
+\contentsline {chapter}{\numberline {6}Step 6 — Iterative architecture design}{8}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Result 6.1 - Initial stage design}{8}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Result 6.2 - Iterative architecture behavior simulation}{9}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Step 7 — Unfolding architecture design}{11}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Result 7 - Unfolding architecture}{11}{section.7.1}%
+\contentsline {chapter}{\numberline {8}Step 8 — Check area}{12}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Result 8 - Area comparison}{12}{section.8.1}%
+\contentsline {chapter}{\numberline {9}Step 9 — Hardware architecture design}{13}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Result 9 - Architecture for magnitude function}{13}{section.9.1}%
