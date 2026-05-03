@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1777776497.03171 "g:/其他電腦/我的電腦/DSP-In-VLSI/HW4-CORDIC/Report/main.tex" "main.pdf" "main" 1777776505.2656 2
+["pdflatex"] 1777777570.41609 "g:/其他電腦/我的電腦/DSP-In-VLSI/HW4-CORDIC/Report/main.tex" "main.pdf" "main" 1777777578.20542 2
   "C:/Users/harry/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1777556540 225234 271ae498c86da04e5c6731949107c10c ""
   "C:/Users/harry/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ectt1095.pk" 1777776327 21972 70fdf8168b1eaaaf2dda9ed468f5b228 ""
   "C:/Users/harry/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1777556409 13350272 0df59464e53e3101262c84f52d812bbe ""
@@ -156,7 +156,7 @@
   "CSD.png" 1777747444 93768 e3256f760629e47cab943ac9f0fe5e4e ""
   "Result6.png" 1777747444 118319 0c3dcdc7ca4571ef08c6b1c1fce29bb9 ""
   "Unfolding.png" 1777747444 205655 78094fca15da52531a9d67848d205975 ""
-  "g:/其他電腦/我的電腦/DSP-In-VLSI/HW4-CORDIC/Report/main.tex" 1777776495 16262 2c959f2065dc76482a52ca11eecd6460 ""
+  "g:/其他電腦/我的電腦/DSP-In-VLSI/HW4-CORDIC/Report/main.tex" 1777777568 16262 2c959f2065dc76482a52ca11eecd6460 ""
   "image.png" 1777747444 208254 d92663bda840cf3aa6d56682bfb926b5 ""
   "image0.png" 1777747444 68260 99baccd97b06e74a76438fd8b63278ba ""
   "image1.png" 1777747444 111430 7da686fbbf3701850668211abacf08f1 ""
@@ -166,10 +166,10 @@
   "image5.png" 1777747444 197339 f67e2e76c321d0b3c9cbcda02feee379 ""
   "image6.png" 1777747444 86173 caeb1eb6b36d9e4a7288fa254ae8792d ""
   "image7.png" 1777747444 252826 a2b0e28792cdc3b7577a1ceae281525b ""
-  "main.aux" 1777776504 6391 2b2cf5278df27fa267f14c5aa025fdd0 "pdflatex"
-  "main.out" 1777776504 5498 3c0b89482c22513fd36fedd9802868f2 "pdflatex"
-  "main.tex" 1777776495 16262 2c959f2065dc76482a52ca11eecd6460 ""
-  "main.toc" 1777776504 1964 7856598662362a2ebf3287e4bf2e3a3b "pdflatex"
+  "main.aux" 1777777577 6391 2b2cf5278df27fa267f14c5aa025fdd0 "pdflatex"
+  "main.out" 1777777577 5498 3c0b89482c22513fd36fedd9802868f2 "pdflatex"
+  "main.tex" 1777777568 16262 2c959f2065dc76482a52ca11eecd6460 ""
+  "main.toc" 1777777577 1964 7856598662362a2ebf3287e4bf2e3a3b "pdflatex"
   (generated)
   "main.aux"
   "main.log"
