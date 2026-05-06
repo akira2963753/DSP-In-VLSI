@@ -3,6 +3,8 @@
 % Packages
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[lining]{ebgaramond}
 \usepackage[cmintegrals,cmbraces]{newtxmath}
 \usepackage{microtype}
@@ -15,8 +17,6 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\usepackage{amsmath}
-\usepackage{amssymb}
 \usepackage{pdflscape}
 \usepackage{float}
 \usepackage{enumitem}
@@ -132,7 +132,7 @@ Please draw the figure showing $S(N)$ \textit{versus} $N$ for $N = 1\ldots 30$. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{image0.png}
-    \caption{Enter Caption}
+    \caption{Scaling Factor $S(N)$ versus Number of Micro-Rotations $N$ for $N = 1\ldots 30$}
     \label{fig:placeholder}
 \end{figure}
 
@@ -156,7 +156,7 @@ From Figure 1.1, we can observe that after more than 4 micro-rotation iterations
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{image1.png}
-    \caption{Enter Caption}
+    \caption{Average Absolute Phase Error versus Fractional Wordlength $w$}
     \label{fig:placeholder}
 \end{figure}
 
@@ -177,7 +177,7 @@ Please draw a figure to denote the average phase errors of 10 quantized input pa
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{image2.png}
-    \caption{Enter Caption}
+    \caption{Average Phase Error of 10 Quantized Input Pairs versus Number of Micro-Rotations $S$}
     \label{fig:placeholder}
 \end{figure}
 
@@ -188,7 +188,7 @@ From Figure 3.2, the minimum word length satisfying the error requirement is 8 b
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{image3.png}
-    \caption{Enter Caption}
+    \caption{Average Phase Error of Quantized Elementary Angles}
     \label{fig:placeholder}
 \end{figure}
 
@@ -231,9 +231,36 @@ The elementary angles are represented in a fixed-point format of 1S-2I-10F. The 
 Please show how you decide the number of micro-rotations for the magnitude function with error tolerance of 0.1\%. (10\%)
 \vspace{0.2cm}
 \hrule
-\vspace{0.2cm}
+\vspace{0.4cm}
 
+From Eq.~(11) in the homework specification, the relative error of approximating the magnitude function using $N$ micro-rotations is bounded by
 
+\begin{equation}
+\frac{|X+jY| - S(N)\,X(N)}{|X+jY|}
+= 1 - \cos\!\bigl(\theta'(N)\bigr)
+\end{equation}
+
+where $\theta'(N)$ is the residual phase after $N$ micro-rotations. Since $\theta'(N)$ must be smaller than the last elementary angle $\theta_e(N-1) = \tan^{-1}(2^{-(N-1)})$, the error upper bound becomes (Eq.~12):
+
+\begin{equation}
+\text{Error} < 1 - \cos\!\bigl(\theta_e(N-1)\bigr)
+= 1 - \frac{1}{\sqrt{1 + 2^{-2(N-1)}}}
+\end{equation}
+
+Imposing the 0.1\% ($= 10^{-3}$) tolerance and solving directly for $N$:
+
+\begin{align}
+1 - \frac{1}{\sqrt{1 + 2^{-2(N-1)}}} &< 10^{-3} \notag \\
+\frac{1}{\sqrt{1 + 2^{-2(N-1)}}} &> 1 - 10^{-3} \notag \\
+1 + 2^{-2(N-1)} &< \frac{1}{(1-10^{-3})^{2}} \notag \\
+2^{-2(N-1)} &< \frac{1}{(0.999)^{2}} - 1 \approx 2.003 \times 10^{-3} \notag \\
+-2(N-1) &< \log_{2}\!\bigl(2.003\times10^{-3}\bigr) \approx -8.96 \notag \\
+N - 1 &> 4.48 \notag \\
+N &> 5.48
+\end{align}
+
+Since $N$ must be a positive integer, $\mathbf{N_{\min} = 6}$.
+\textbf{Therefore, a minimum of 6 micro-rotations is required to meet the 0.1\% error tolerance for the magnitude function.}
 
 \newpage
 
@@ -251,17 +278,20 @@ Write a program to show the setting of fractional wordlength of CSD versus error
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\linewidth]{image4.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.8\linewidth]{image4.png}
+    \caption{Scaling Factor Approximation Error versus Fractional Wordlength of CSD Representation}
     \label{fig:placeholder}
 \end{figure}
 
-The shift-and-add module needs \textbf{three adders.}
+To satisfy the 0.1\% error tolerance, the scaling factor $S(N)$ is converted to the CSD
+sequence $(0.10100100\bar{1})_{\text{CSD}}$ with a 9-bit fractional wordlength. This corresponds to
+$2^{-1} + 2^{-3} + 2^{-6} - 2^{-9}$. Since this expression contains 4 non-zero terms, the shift-and-add module 
+requires exactly \textbf{3 adders}, matching the architecture in Figure 5.2.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\linewidth]{CSD.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.8\linewidth]{CSD.png}
+    \caption{Shift-and-Add Block Diagram for Scaling Factor $S(N)$ Using CSD Representation}
     \label{fig:placeholder}
 \end{figure}
 
@@ -284,7 +314,7 @@ Depict your design of the initial stage. Mark the word-length in the block diagr
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\linewidth]{Result6.png}
-    \caption{Enter Caption}
+    \caption{Block Diagram of the Initial Stage with Word-Length Annotations}
     \label{fig:placeholder}
 \end{figure}
 
@@ -343,20 +373,23 @@ Magnitude Output            & 1S-1I-12F & Matches input format \\
 \caption{Minimum Hardware Configuration to Meet Error Constraints}
 \end{table}
 
+Therefore, in the following implementation, I will adopt the parameters from Table 6.2 rather 
+than Table 6.1 to ensure \textbf{compliance with the error threshold}.
+
 \newpage
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{image.png}
     \includegraphics[width=\linewidth]{image5.png}
-    \caption{Enter Caption}
+    \caption{Behavior Simulation Timing Diagram of Iterative CORDIC Architecture (Four Inputs)}
     \label{fig:placeholder}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.85\linewidth]{image6.png}
-    \caption{Enter Caption}
+    \includegraphics[width=0.85\linewidth]{4output.png}
+    \caption{Phase Error versus Input Index $m$ --- Iterative CORDIC Architecture}
     \label{fig:placeholder}
 \end{figure}
 
@@ -375,14 +408,30 @@ Draw the block diagram of your $\frac{S}{2}$-unfolding architecture. (10\%). Sho
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{Unfolding.png}
-    \caption{Enter Caption}
+    \caption{Block Diagram of the $\frac{S}{2}$-Unfolding CORDIC Architecture}
     \label{fig:placeholder}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{image7.png}
-    \caption{Enter Caption}
+    \caption{Behavior Simulation Timing Diagram of Unfolding CORDIC Architecture (10 Inputs)}
+    \label{fig:placeholder}
+\end{figure}
+
+\newpage
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{image7.png}
+    \caption{Post-Synthesis Simulation Timing Diagram of Unfolding CORDIC Architecture (10 Inputs)}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{image6.png}
+    \caption{Phase Error versus Input Index $m$ --- Unfolding Architecture (Post-Synthesis)}
     \label{fig:placeholder}
 \end{figure}
 
@@ -400,9 +449,25 @@ Report and compare the area before and after unfolding. (10\%)
 \hrule
 \vspace{0.2cm}
 
-% -------------------------
-% USER WILL FILL IN HERE
-% -------------------------
+\begin{table}[H]
+\centering
+\caption{Area Comparison Before and After Unfolding}
+\vspace{0.6em}
+\setlength{\tabcolsep}{16pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Architecture} & \textbf{Clock Frequency} & \textbf{Total Cell Area (\si{\micro\metre\squared})} \\
+\midrule
+Folding (Iterative)       & \SI{200}{MHz} & 284.24 \\
+Unfolding + Pipeline      & \SI{200}{MHz} & 763.91 \\
+\midrule
+\textbf{Area Overhead}    & ---           & $\mathbf{\times 2.69}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The unfolding architecture achieves the same clock frequency of \SI{200}{MHz} but increases the total cell area by approximately $2.69\times$ compared to the folding (iterative) design. This overhead is expected, as unfolding replicates the datapath to process multiple samples per cycle, trading area for higher throughput.
 
 \newpage
 
@@ -421,7 +486,52 @@ Draw the shift-and-add module for the scaling factor (5\%). Connect the shift-an
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{CORDIC.png}
-    \caption{Enter Caption}
+    \caption{Complete CORDIC Architecture Block Diagram Including Initial Stage and Scaling Stage}
+    \label{fig:cordic_block}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Synthesis Timing Constraint Summary (Clock Period = \SI{1.0}{ns}, \SI{1}{GHz})}
+\vspace{0.6em}
+\setlength{\tabcolsep}{14pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Constraint} & \textbf{Value} & \textbf{Remark} \\
+\midrule
+Clock Period            & \SI{1.0}{ns}   & \SI{1}{GHz} target frequency \\
+Clock Latency           & \SI{0.5}{ns}   & \texttt{set\_clock\_latency} \\
+Setup Uncertainty       & \SI{0.1}{ns}   & \texttt{set\_clock\_uncertainty -setup} \\
+Hold Uncertainty        & \SI{0.005}{ns} & \texttt{set\_clock\_uncertainty -hold} \\
+Input Delay             & \SI{0.5}{ns}   & 50\% of clock period \\
+Output Delay            & \SI{0.5}{ns}   & 50\% of clock period \\
+\midrule
+Effective Setup Budget  & \SI{0.9}{ns}   & Period $-$ Setup Uncertainty \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Final-Sim.png}
+    \caption{Behavior Simulation --- Final CORDIC with Magnitude Output}
+    \label{fig:final_sim}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Final-Syn.png}
+    \caption{Gate-Level (Post-Synthesis) Simulation --- Final CORDIC with Magnitude Output}
+    \label{fig:final_syn}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{output.png}
+    \caption{MagnitudeError versus Input Index $m$ --- Final CORDIC with Magnitude Output (Post-Synthesis)}
     \label{fig:placeholder}
 \end{figure}
 

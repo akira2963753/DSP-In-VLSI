@@ -13,7 +13,7 @@
 \contentsline {section}{\numberline {6.2}Result 6.2 - Iterative architecture behavior simulation}{9}{section.6.2}%
 \contentsline {chapter}{\numberline {7}Step 7 — Unfolding architecture design}{11}{chapter.7}%
 \contentsline {section}{\numberline {7.1}Result 7 - Unfolding architecture}{11}{section.7.1}%
-\contentsline {chapter}{\numberline {8}Step 8 — Check area}{12}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Result 8 - Area comparison}{12}{section.8.1}%
-\contentsline {chapter}{\numberline {9}Step 9 — Hardware architecture design}{13}{chapter.9}%
-\contentsline {section}{\numberline {9.1}Result 9 - Architecture for magnitude function}{13}{section.9.1}%
+\contentsline {chapter}{\numberline {8}Step 8 — Check area}{13}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Result 8 - Area comparison}{13}{section.8.1}%
+\contentsline {chapter}{\numberline {9}Step 9 — Hardware architecture design}{14}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Result 9 - Architecture for magnitude function}{14}{section.9.1}%
