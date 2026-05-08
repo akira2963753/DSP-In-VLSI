@@ -36,8 +36,8 @@ module SDF_FFT(
     
     // Sample input at posedge of clock
     logic InValid_r;
-    logic signed [`DATA_WIDTH-1] FFTInRe_r;
-    logic signed [`DATA_WIDTH-1] FFTInIm_r;
+    logic signed [`DATA_WIDTH-1:0] FFTInRe_r;
+    logic signed [`DATA_WIDTH-1:0] FFTInIm_r;
 
     // ROM for twiddle factors
     logic signed [`TWIDDLE_WIDTH-1:0] ROM32 [0:7];
@@ -235,10 +235,17 @@ module SDF_FFT(
         end
     end
 
-    always_comb begin : OUTPUT_BLOCK
-        SDFOutRe = SOut_Re[4];
-        SDFOutIm = SOut_Im[4];
-        OutValid = valid_pipe[30];
+    always_ff @(posedge clk or negedge rst_n) begin : OUTPUT_BLOCK
+        if(!rst_n) begin
+            SDFOutRe <= 0;
+            SDFOutIm <= 0;
+            OutValid <= 0;       
+        end
+        else begin
+            SDFOutRe <= SOut_Re[4];
+            SDFOutIm <= SOut_Im[4];
+            OutValid <= valid_pipe[30];
+        end
     end
 
     always_ff @(posedge clk or negedge rst_n) begin

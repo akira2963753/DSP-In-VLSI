@@ -25,17 +25,47 @@ module TESTBED();
     wire  signed [`DATA_WIDTH-1:0] BROutIm;
     wire OutValid;
 
-    logic signed [`DATA_WIDTH-1:0] FFTInRe_Temp [0:`NUM-1];
-    logic signed [`DATA_WIDTH-1:0] FFTInIm_Temp [0:`NUM-1];
-    logic signed [`DATA_WIDTH-1:0] BROutRe_Temp [0:`NUM-1];
-    logic signed [`DATA_WIDTH-1:0] BROutIm_Temp [0:`NUM-1];
+    `ifdef Q3_SIM 
+        localparam CNT_W = $clog2(`NUM*3);
+        logic signed [`DATA_WIDTH-1:0] FFTInRe_Temp [0:`NUM*3-1];
+        logic signed [`DATA_WIDTH-1:0] FFTInIm_Temp [0:`NUM*3-1];
+        logic signed [`DATA_WIDTH-1:0] BROutRe_Temp [0:`NUM*3-1];
+        logic signed [`DATA_WIDTH-1:0] BROutIm_Temp [0:`NUM*3-1];
+        initial begin
+            $readmemh({`PATH, "Q3_REAL.dat"}, FFTInRe_Temp);
+            $readmemh({`PATH, "Q3_IMAG.dat"}, FFTInIm_Temp);             
+        end     
+    `else
+        localparam CNT_W = $clog2(`NUM);
+        logic signed [`DATA_WIDTH-1:0] FFTInRe_Temp [0:`NUM-1];
+        logic signed [`DATA_WIDTH-1:0] FFTInIm_Temp [0:`NUM-1];
+        logic signed [`DATA_WIDTH-1:0] BROutRe_Temp [0:`NUM-1];
+        logic signed [`DATA_WIDTH-1:0] BROutIm_Temp [0:`NUM-1];
+        initial begin
+            $readmemh({`PATH, "Q1_REAL.dat"}, FFTInRe_Temp);
+            $readmemh({`PATH, "Q1_IMAG.dat"}, FFTInIm_Temp);
+        end
+    `endif      
+
+    logic [CNT_W-1:0] out_cnt;   
 
     FFT_IP DUT(.*);
 
-    initial begin
-        $readmemh({`PATH, "FFT_INPUT32_REAL.dat"}, FFTInRe_Temp);
-        $readmemh({`PATH, "FFT_INPUT32_IMAG.dat"}, FFTInIm_Temp);
-    end
+    `ifdef GATE_SIM
+        initial begin
+            $display("========================================");
+            $display("       GATE-LEVEL SIMULATION START      ");
+            $display("========================================");
+        end
+
+        initial $sdf_annotate("../02_SYN/Netlist/FFT_IP.sdf", DUT);
+    `else
+        initial begin
+            $display("========================================");
+            $display("       BEHAVIORAL SIMULATION START      ");
+            $display("========================================");
+        end
+    `endif
 
     always #(`PERIOD_DIV) clk = ~clk;
 
@@ -48,27 +78,52 @@ module TESTBED();
         repeat(2) @(negedge clk) rst_n = ~rst_n;
         @(negedge clk);
         INPUT_GEN();
-        #((`NUM*2+2)*(`PERIOD_DIV*2));
-        $writememh({`PATH, "BROutRe.dat"}, BROutRe_Temp);
-        $writememh({`PATH, "BROutIm.dat"}, BROutIm_Temp);
+        #((`NUM*4+2)*(`PERIOD_DIV*2));
+        `ifdef Q3_SIM
+            $display("========================================");
+            $display("         THIS IS Q3 SIMULATION          ");
+            $display("========================================");
+            $writememh({`PATH, "Q3_BROutRe.dat"}, BROutRe_Temp);
+            $writememh({`PATH, "Q3_BROutIm.dat"}, BROutIm_Temp);
+        `else 
+            $display("========================================");
+            $display("         THIS IS Q1 SIMULATION          ");
+            $display("========================================");
+            $writememh({`PATH, "Q1_BROutRe.dat"}, BROutRe_Temp);
+            $writememh({`PATH, "Q1_BROutIm.dat"}, BROutIm_Temp);
+        `endif
         #10 $finish;
     end
 
-    task INPUT_GEN;
-        begin
-            for(int i = 0; i<`NUM; i=i+1) begin
-                FFTInRe = FFTInRe_Temp[i];
-                FFTInIm = FFTInIm_Temp[i];
-                InValid = 1;
-                @(negedge clk);
+    `ifdef Q3_SIM
+        task INPUT_GEN;
+            begin
+                for(int i = 0; i<`NUM*3; i=i+1) begin
+                    FFTInRe = FFTInRe_Temp[i];
+                    FFTInIm = FFTInIm_Temp[i];
+                    InValid = 1;
+                    @(negedge clk);
+                end
+                FFTInRe = 0;
+                FFTInIm = 0;
+                InValid = 0;
             end
-            FFTInRe = 0;
-            FFTInIm = 0;
-            InValid = 0;
-        end
-    endtask
-
-    logic [`CNT_WIDTH-1:0] out_cnt;
+        endtask
+    `else
+        task INPUT_GEN;
+            begin
+                for(int i = 0; i<`NUM; i=i+1) begin
+                    FFTInRe = FFTInRe_Temp[i];
+                    FFTInIm = FFTInIm_Temp[i];
+                    InValid = 1;
+                    @(negedge clk);
+                end
+                FFTInRe = 0;
+                FFTInIm = 0;
+                InValid = 0;
+            end
+        endtask
+    `endif
 
     // Capture Output
     always @(negedge clk or negedge rst_n) begin
