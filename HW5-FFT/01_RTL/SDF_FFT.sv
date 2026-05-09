@@ -239,8 +239,7 @@ module SDF_FFT(
         else begin
             SDFOutRe <= SOut_Re[4];
             SDFOutIm <= SOut_Im[4];
-            // 30 + 4(Pipe) = 34 Cycles
-            OutValid <= valid_pipe[34];
+            OutValid <= valid_pipe[34]; // 30 + 4(Pipe) = 34 Cycles
         end
     end
 
@@ -250,7 +249,7 @@ module SDF_FFT(
     end
 
     always_comb begin : ROM_LUT
-        ROM32[0] = 11'sd512;
+        ROM32[0] = 11'sd512;    // Redundary Logic, removed by synthesis
         ROM32[1] = 11'sd502;
         ROM32[2] = 11'sd473;
         ROM32[3] = 11'sd425;
@@ -258,11 +257,11 @@ module SDF_FFT(
         ROM32[5] = 11'sd284;
         ROM32[6] = 11'sd195;
         ROM32[7] = 11'sd99;
-        ROM16[0] = 11'sd512;
+        ROM16[0] = 11'sd512;    // Redundary Logic, removed by synthesis
         ROM16[1] = 11'sd473;
         ROM16[2] = 11'sd362;
         ROM16[3] = 11'sd195;
-        ROM8[0] = 11'sd512;
+        ROM8[0] = 11'sd512;     // Redundary Logic, removed by synthesis
         ROM8[1] = 11'sd362;
     end
 
