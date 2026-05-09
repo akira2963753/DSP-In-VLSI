@@ -24,31 +24,28 @@ module SDF_FFT(
     output  logic   OutValid);
 
     // Counter and Control Signals
-    logic [`CNT_WIDTH-1:0] cnt;     // main Counter
-    logic BF_en [0:`STAGE_SIZE-1];  // butterfly Enable
-    logic [31:0] valid_pipe;        // pipeline for InValid to OutValid
-
+    logic [`CNT_WIDTH-1:0] cnt [0:`STAGE_SIZE-1];   // main Counter
+    logic BF_en [0:`STAGE_SIZE-1];                  // butterfly Enable
+    logic [34:0] valid_pipe;                        // pipeline for InValid to OutValid
 
     // Flush counter to avoid stopping when InValid = 0
     logic [`CNT_WIDTH:0] flush_cnt; // calculate when output done
     logic InValid_d;                // catch the negedge of InValid
     logic InterValid;               // intermediate valid signal
-    
-    // Sample input at posedge of clock
-    logic InValid_r;
-    logic signed [`DATA_WIDTH-1:0] FFTInRe_r;
-    logic signed [`DATA_WIDTH-1:0] FFTInIm_r;
+    logic InValid_r;                // Sample InValid at posedge of clock
 
     // ROM for twiddle factors
     logic signed [`TWIDDLE_WIDTH-1:0] ROM32 [0:7];
     logic signed [`TWIDDLE_WIDTH-1:0] ROM16 [0:3];
     logic signed [`TWIDDLE_WIDTH-1:0] ROM8 [0:1];
 
-    // Input and Output for each stage
-    logic signed [`DATA_WIDTH-1:0] In_Re[0:`STAGE_SIZE-1];
-    logic signed [`DATA_WIDTH-1:0] In_Im[0:`STAGE_SIZE-1];
+    // Stage Outputs
     logic signed [`DATA_WIDTH-1:0] SOut_Re[0:`STAGE_SIZE-1];
     logic signed [`DATA_WIDTH-1:0] SOut_Im[0:`STAGE_SIZE-1];
+    
+    // Stage Pipelined Registers
+    logic signed [`DATA_WIDTH-1:0] In_Re[0:`STAGE_SIZE-1];
+    logic signed [`DATA_WIDTH-1:0] In_Im[0:`STAGE_SIZE-1];
 
     // Twiddle factors for each stage
     logic signed [`TWIDDLE_WIDTH-1:0] TF_Re[0:`STAGE_SIZE-2];
@@ -61,7 +58,7 @@ module SDF_FFT(
         .clk(clk),
         .rst_n(rst_n),
         .En(BF_en[0]),
-        .Idx(cnt[3:0]),
+        .Idx(cnt[0][3:0]),
         .In_Re(In_Re[0]),
         .In_Im(In_Im[0]),
         .TF_Re(TF_Re[0]),
@@ -76,7 +73,7 @@ module SDF_FFT(
         .clk(clk),
         .rst_n(rst_n),
         .En(BF_en[1]),
-        .Idx(cnt[2:0]),
+        .Idx(cnt[1][2:0]),
         .In_Re(In_Re[1]),
         .In_Im(In_Im[1]),
         .TF_Re(TF_Re[1]),
@@ -91,7 +88,7 @@ module SDF_FFT(
         .clk(clk),
         .rst_n(rst_n),
         .En(BF_en[2]),
-        .Idx(cnt[1:0]),
+        .Idx(cnt[2][1:0]),
         .In_Re(In_Re[2]),
         .In_Im(In_Im[2]),
         .TF_Re(TF_Re[2]),
@@ -106,7 +103,7 @@ module SDF_FFT(
         .clk(clk),
         .rst_n(rst_n),
         .En(BF_en[3]),
-        .Idx(cnt[0]),
+        .Idx(cnt[3][0]),
         .In_Re(In_Re[3]),
         .In_Im(In_Im[3]),
         .TF_Re(TF_Re[3]),
@@ -123,109 +120,107 @@ module SDF_FFT(
         .SOut_Re(SOut_Re[4]),
         .SOut_Im(SOut_Im[4]));
 
-
-    // Sample Input
-    always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n) begin
-            InValid_r <= 0;
-            FFTInRe_r <= 0;
-            FFTInIm_r <= 0;
-        end
-        else begin
-            InValid_r <= InValid;
-            FFTInRe_r <= FFTInRe;
-            FFTInIm_r <= FFTInIm;
-        end
-    end
-
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            InValid_r <= 0;
             flush_cnt <= 0;
             InValid_d <= 0;
         end 
         else begin
+            InValid_r <= InValid; // Sample Input Valid
             InValid_d <= InValid_r; // Detect Negative-Edge of InValid
-            if (!InValid_r && InValid_d) flush_cnt <= 30; // 30 + 1(Input Sample) = 31 Cycles
+            if (!InValid_r && InValid_d) flush_cnt <= 35; // 30(cal) + 1(Input Sample) + 4(Pipe) = 35 Cycles
             else if (flush_cnt!=0 && !InValid_r) flush_cnt <= flush_cnt - 1;
             else flush_cnt <= 0;
         end
     end
 
-    always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n) cnt <= 0;
-        else if(InterValid) cnt <= cnt + 1;
-        else cnt <= 0;
+    always_ff @(posedge clk or negedge rst_n) begin : COUNTER_BLOCK
+        if(!rst_n) for(int i = 0; i < `STAGE_SIZE; i++) cnt[i] <= 0;
+        else if(InterValid) begin
+            cnt[0] <= cnt[0] + 1;
+            for(int i = 1; i < `STAGE_SIZE; i++) cnt[i] <= cnt[i-1];
+        end
+        else for(int i = 0; i < `STAGE_SIZE; i++) cnt[i] <= 0;
     end
 
-    always_comb begin : CONTROL_SIGN
-        for(int i=0; i<5; i++) BF_en[i] = InterValid && cnt[4-i];
+    always_comb begin : CONTROL_BLOCK
         // Flush counter: auto-flush pipeline 31 cycles after InValid falls
         InterValid = InValid_r || InValid_d || (flush_cnt != 0);
+        for(int i = 0; i < `STAGE_SIZE; i++) BF_en[i] = InterValid && cnt[i][4-i];
     end
 
-    always_comb begin : PASS_STAGE
-        for(int i = 0; i < `STAGE_SIZE; i++) begin
-            if(i==0) begin
-                In_Re[0] = FFTInRe_r;
-                In_Im[0] = FFTInIm_r;
+    always_ff @(posedge clk or negedge rst_n) begin : PIPELINED_STAGE
+        if(!rst_n) begin
+            for(int i = 0; i < `STAGE_SIZE; i++) begin
+                In_Re[i] <= 0;
+                In_Im[i] <= 0;
             end
-            else begin
-                In_Re[i] = SOut_Re[i-1];
-                In_Im[i] = SOut_Im[i-1];
+        end
+        else begin
+            for(int i = 0; i < `STAGE_SIZE; i++) begin
+                if(i==0) begin // Sample Input 
+                    In_Re[0] <= FFTInRe;
+                    In_Im[0] <= FFTInIm;
+                end
+                else begin
+                    In_Re[i] <= SOut_Re[i-1];
+                    In_Im[i] <= SOut_Im[i-1];
+                end
             end
         end
     end
 
     always_comb begin : TF_LUT
-        if(cnt[3:0]==0) begin
+        if(cnt[0][3:0]==0) begin
             TF_Re[0] = 11'sd512;
             TF_Im[0] = 0;
         end
-        else if(cnt[3:0]==8) begin
+        else if(cnt[0][3:0]==8) begin
             TF_Re[0] = 0;
             TF_Im[0] = -11'sd512;            
         end
-        else if(cnt[3]) begin
-            TF_Re[0] = -ROM32[8-cnt[2:0]];
-            TF_Im[0] = -ROM32[cnt[2:0]];
+        else if(cnt[0][3]) begin
+            TF_Re[0] = -ROM32[8-cnt[0][2:0]];
+            TF_Im[0] = -ROM32[cnt[0][2:0]];
         end
         else begin
-            TF_Re[0] = ROM32[cnt[2:0]];
-            TF_Im[0] = -ROM32[8-cnt[2:0]];
+            TF_Re[0] = ROM32[cnt[0][2:0]];
+            TF_Im[0] = -ROM32[8-cnt[0][2:0]];
         end
-        if(cnt[2:0]==0) begin
+        if(cnt[1][2:0]==0) begin
             TF_Re[1] = 11'sd512;
             TF_Im[1] = 0;
         end
-        else if(cnt[2:0]==4) begin
+        else if(cnt[1][2:0]==4) begin
             TF_Re[1] = 0;
             TF_Im[1] = -11'sd512;
         end
-        else if(cnt[2]) begin
-            TF_Re[1] = -ROM16[4-cnt[1:0]];
-            TF_Im[1] = -ROM16[cnt[1:0]];
+        else if(cnt[1][2]) begin
+            TF_Re[1] = -ROM16[4-cnt[1][1:0]];
+            TF_Im[1] = -ROM16[cnt[1][1:0]];
         end
         else begin
-            TF_Re[1] = ROM16[cnt[1:0]];
-            TF_Im[1] = -ROM16[4-cnt[1:0]];
+            TF_Re[1] = ROM16[cnt[1][1:0]];
+            TF_Im[1] = -ROM16[4-cnt[1][1:0]];
         end
-        if(cnt[1:0]==0) begin
+        if(cnt[2][1:0]==0) begin
             TF_Re[2] = 11'sd512;
             TF_Im[2] = 0;
         end
-        else if(cnt[1:0]==2) begin
+        else if(cnt[2][1:0]==2) begin
             TF_Re[2] = 0;
             TF_Im[2] = -11'sd512;
         end
-        else if(cnt[1]) begin
-            TF_Re[2] = -ROM8[2-cnt[0:0]];
-            TF_Im[2] = -ROM8[cnt[0:0]];
+        else if(cnt[2][1]) begin
+            TF_Re[2] = -ROM8[2-cnt[2][0]];
+            TF_Im[2] = -ROM8[cnt[2][0]];
         end
         else begin
-            TF_Re[2] = ROM8[cnt[0:0]];
-            TF_Im[2] = -ROM8[2-cnt[0:0]];
+            TF_Re[2] = ROM8[cnt[2][0]];
+            TF_Im[2] = -ROM8[2-cnt[2][0]];
         end
-        if(cnt[0]) begin
+        if(cnt[3][0]) begin
             TF_Re[3] = 0;
             TF_Im[3] = -11'sd512;
         end
@@ -244,13 +239,14 @@ module SDF_FFT(
         else begin
             SDFOutRe <= SOut_Re[4];
             SDFOutIm <= SOut_Im[4];
-            OutValid <= valid_pipe[30];
+            // 30 + 4(Pipe) = 34 Cycles
+            OutValid <= valid_pipe[34];
         end
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) valid_pipe <= 0;
-        else valid_pipe <= {valid_pipe[30:0], InValid_r};
+        else valid_pipe <= {valid_pipe[33:0], InValid_r};
     end
 
     always_comb begin : ROM_LUT

@@ -78,17 +78,20 @@ module TESTBED();
         repeat(2) @(negedge clk) rst_n = ~rst_n;
         @(negedge clk);
         INPUT_GEN();
-        #((`NUM*4+2)*(`PERIOD_DIV*2));
         `ifdef Q3_SIM
             $display("========================================");
             $display("         THIS IS Q3 SIMULATION          ");
             $display("========================================");
+            @(negedge OutValid);
+            @(negedge clk); // Delay Clock
             $writememh({`PATH, "Q3_BROutRe.dat"}, BROutRe_Temp);
             $writememh({`PATH, "Q3_BROutIm.dat"}, BROutIm_Temp);
         `else 
             $display("========================================");
             $display("         THIS IS Q1 SIMULATION          ");
             $display("========================================");
+            @(negedge OutValid);
+            @(negedge clk); // Delay Clock
             $writememh({`PATH, "Q1_BROutRe.dat"}, BROutRe_Temp);
             $writememh({`PATH, "Q1_BROutIm.dat"}, BROutIm_Temp);
         `endif
