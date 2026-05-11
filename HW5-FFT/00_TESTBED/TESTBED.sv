@@ -11,7 +11,7 @@
 *
 ******************************************************************************/
 `include "define.vh"
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 
 module TESTBED();
@@ -143,6 +143,14 @@ module TESTBED();
         $fsdbDumpfile("wave.fsdb");
         $fsdbDumpvars(0, TESTBED);
         $fsdbDumpMDA;
+    end
+
+    initial begin
+        #10000;
+        $display("========================================");
+        $display("        TEST FAILED (OUT OF TIME)       ");
+        $display("========================================");
+        #10 $finish;
     end
 
 endmodule

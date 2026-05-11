@@ -11,7 +11,7 @@
 *
 ******************************************************************************/
 `include "define.vh"
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 module Reorder_Buffer (
     input   clk,
@@ -57,13 +57,22 @@ module Reorder_Buffer (
     end
 
     // BankA & BankB Memory
-    always_ff @(posedge clk) begin
-        // Write into BankA Memory
-        if(BankA_w) BankA[Addr_w] <= SDFOut;
-        // Write into BankB Memory
-        if(BankB_w) BankB[Addr_w] <= SDFOut;
-        // Select the Read Memory between Bank A and B
-        BROut <= (Bank_sel)? BankA[Addr_r] : BankB[Addr_r];
+    always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n) begin
+            for(int i = 0; i < `NUM; i++) begin
+                BankA[i] <= 0;
+                BankB[i] <= 0;
+            end
+            BROut <= 0;
+        end
+        else begin
+            // Write into BankA Memory
+            if(BankA_w) BankA[Addr_w] <= SDFOut;
+            // Write into BankB Memory
+            if(BankB_w) BankB[Addr_w] <= SDFOut;
+            // Select the Read Memory between Bank A and B
+            BROut <= (Bank_sel)? BankA[Addr_r] : BankB[Addr_r];
+        end
     end
 
     // Synchronous Read SRAM Read Address would be prepared in last clock

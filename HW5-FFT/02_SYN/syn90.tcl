@@ -16,7 +16,7 @@ link
 check_design
 
 # Set the clock period
-set period 10
+set period 20
 set io_delay [expr {$period * 0.5}]
 # set io_delay
 
@@ -24,12 +24,13 @@ set_operating_conditions -min fast  -max slow
 set_wire_load_model -name tsmc090_wl10 -library slow
 
 create_clock -name clk -period $period  [get_ports clk]
-# set_ideal_network         [get_ports clk]
+set_ideal_network         [get_ports clk]
 # set_ideal_network         [get_ports rst_n]
 set_dont_touch_network                  [get_clocks clk]
-# set_fix_hold                            [get_clocks clk]
+set_fix_hold                            [get_clocks clk]
 
-set_clock_uncertainty       0.5    [get_clocks clk]
+set_clock_uncertainty       -setup 0.5    [get_clocks clk]
+set_clock_uncertainty       -hold  0.01    [get_clocks clk]
 set_clock_latency -source   0      [get_clocks clk]
 set_clock_latency           0.1    [get_clocks clk]
 set_clock_transition        0.1    [all_clocks]
@@ -92,4 +93,3 @@ remove_design -all
 file delete -force default.svf
 file delete -force filenames.log
 file delete -force command.log
-

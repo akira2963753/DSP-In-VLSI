@@ -1,2 +1,1 @@
-# NOTE: Verify the define name matches your $sdf_annotate condition in TESTBED.sv (e.g., GATE_SIM)
 vcs -full64 -debug_access+all -R +v2k -f file.f +neg_tchk +define+GATE_SIM

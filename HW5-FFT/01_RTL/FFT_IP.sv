@@ -11,7 +11,7 @@
 *
 ******************************************************************************/
 `include "define.vh"
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 module FFT_IP(
     input   clk,
@@ -29,8 +29,10 @@ module FFT_IP(
     logic signed [`DATA_WIDTH*2-1:0] SDFOut;
     logic signed [`DATA_WIDTH*2-1:0] BROut; 
 
-    assign SDFOut = {SDFOutRe, SDFOutIm};
-    assign {BROutRe, BROutIm} = BROut;
+    assign SDFOut[`DATA_WIDTH*2-1 -: `DATA_WIDTH] = SDFOutRe;
+    assign SDFOut[`DATA_WIDTH-1 -: `DATA_WIDTH] = SDFOutIm;
+    assign BROutRe = BROut[`DATA_WIDTH*2-1 -: `DATA_WIDTH];
+    assign BROutIm = BROut[`DATA_WIDTH-1 -: `DATA_WIDTH];
 
     SDF_FFT FFT_Unit(
         .clk(clk),

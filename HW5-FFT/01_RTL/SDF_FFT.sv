@@ -11,7 +11,7 @@
 *
 ******************************************************************************/
 `include "define.vh"
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 module SDF_FFT(
     input   clk,
@@ -333,16 +333,17 @@ module FFT_PE #(
     end
 
     always_comb begin
-        Mul_Result = 0;
         if(En) begin
             // [ButterFly] Add and transfer to next stage
             SOut_Re = In_Re + DeBuf_Re[Idx];
             SOut_Im = In_Im + DeBuf_Im[Idx];
+            Mul_Result = 0;
         end
         else begin
             // [ByPass] Complex Multiplication
             Mul_Result = complex_mul(DeBuf_Re[Idx], DeBuf_Im[Idx], TF_Re, TF_Im);
-            {SOut_Re, SOut_Im} = Mul_Result;
+            SOut_Re= Mul_Result[`DATA_WIDTH*2-1 -: `DATA_WIDTH];
+            SOut_Im= Mul_Result[`DATA_WIDTH-1 -: `DATA_WIDTH];
         end
     end
 
