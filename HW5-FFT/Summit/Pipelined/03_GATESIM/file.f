@@ -1,0 +1,4 @@
++incdir+../01_RTL/
+-sverilog ../02_SYN/Netlist/FFT_IP_syn.v
+-sverilog ../00_TESTBED/TESTBED.sv
+-v /usr/cad/ADFP/Executable_Package/Collaterals/IP/stdcell/N16ADFP_StdCell/VERILOG/N16ADFP_StdCell.v

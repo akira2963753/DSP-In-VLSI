@@ -51,7 +51,7 @@ module SDF_FFT(
     logic signed [`TWIDDLE_WIDTH-1:0] TF_Re[0:`STAGE_SIZE-2];
     logic signed [`TWIDDLE_WIDTH-1:0] TF_Im[0:`STAGE_SIZE-2];
 
-    FFT_PE #(
+/*    FFT_PE #(
         .STAGE(16),
         .IDX_WIDTH(4)
     ) STAGE01(
@@ -110,8 +110,31 @@ module SDF_FFT(
         .TF_Im(TF_Im[3]),
         .SOut_Re(SOut_Re[3]),
         .SOut_Im(SOut_Im[3]));
+*/
+    genvar s;
+    generate
+        for(s = 0; s < `STAGE_SIZE - 1; s++) begin
+            localparam int STAGE_VAL = (1 << (`STAGE_SIZE - 1 - s)); // 2^(s-1)
+            localparam int IDX_W = `STAGE_SIZE - 1 - s; 
 
-    FFT_FINAL_PE STAGE05(
+            FFT_PE #(
+                .STAGE(STAGE_VAL),
+                .IDX_WIDTH(IDX_W)
+            ) STAGE_PE (
+                .clk(clk), 
+                .rst_n(rst_n),
+                .En(BF_en[s]),
+                .Idx(cnt[s][IDX_W-1:0]),
+                .In_Re(In_Re[s]), 
+                .In_Im(In_Im[s]),
+                .TF_Re(TF_Re[s]), 
+                .TF_Im(TF_Im[s]),
+                .SOut_Re(SOut_Re[s]), 
+                .SOut_Im(SOut_Im[s]));
+    end
+    endgenerate
+
+    FFT_FINAL_PE FINAL_STAGE(
         .clk(clk),
         .rst_n(rst_n),
         .En(BF_en[4]),
