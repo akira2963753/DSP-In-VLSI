@@ -196,12 +196,12 @@ module SDF_FFT(
 
     always_comb begin : TF_LUT
         if(cnt[0][3:0]==0) begin
-            TF_Re[0] = 11'sd512;
+            TF_Re[0] = 9'sd128;
             TF_Im[0] = 0;
         end
         else if(cnt[0][3:0]==8) begin
             TF_Re[0] = 0;
-            TF_Im[0] = -11'sd512;            
+            TF_Im[0] = -9'sd128;            
         end
         else if(cnt[0][3]) begin
             TF_Re[0] = -ROM32[8-cnt[0][2:0]];
@@ -212,12 +212,12 @@ module SDF_FFT(
             TF_Im[0] = -ROM32[8-cnt[0][2:0]];
         end
         if(cnt[1][2:0]==0) begin
-            TF_Re[1] = 11'sd512;
+            TF_Re[1] = 9'sd128;
             TF_Im[1] = 0;
         end
         else if(cnt[1][2:0]==4) begin
             TF_Re[1] = 0;
-            TF_Im[1] = -11'sd512;
+            TF_Im[1] = -9'sd128;
         end
         else if(cnt[1][2]) begin
             TF_Re[1] = -ROM16[4-cnt[1][1:0]];
@@ -228,12 +228,12 @@ module SDF_FFT(
             TF_Im[1] = -ROM16[4-cnt[1][1:0]];
         end
         if(cnt[2][1:0]==0) begin
-            TF_Re[2] = 11'sd512;
+            TF_Re[2] = 9'sd128;
             TF_Im[2] = 0;
         end
         else if(cnt[2][1:0]==2) begin
             TF_Re[2] = 0;
-            TF_Im[2] = -11'sd512;
+            TF_Im[2] = -9'sd128;
         end
         else if(cnt[2][1]) begin
             TF_Re[2] = -ROM8[2-cnt[2][0]];
@@ -245,10 +245,10 @@ module SDF_FFT(
         end
         if(cnt[3][0]) begin
             TF_Re[3] = 0;
-            TF_Im[3] = -11'sd512;
+            TF_Im[3] = -9'sd128;
         end
         else begin
-            TF_Re[3] = 11'sd512;
+            TF_Re[3] = 9'sd128;
             TF_Im[3] = 0;
         end
     end
@@ -272,20 +272,20 @@ module SDF_FFT(
     end
 
     always_comb begin : ROM_LUT
-        ROM32[0] = 11'sd512;    // Redundary Logic, removed by synthesis
-        ROM32[1] = 11'sd502;
-        ROM32[2] = 11'sd473;
-        ROM32[3] = 11'sd425;
-        ROM32[4] = 11'sd362;
-        ROM32[5] = 11'sd284;
-        ROM32[6] = 11'sd195;
-        ROM32[7] = 11'sd99;
-        ROM16[0] = 11'sd512;    // Redundary Logic, removed by synthesis
-        ROM16[1] = 11'sd473;
-        ROM16[2] = 11'sd362;
-        ROM16[3] = 11'sd195;
-        ROM8[0] = 11'sd512;     // Redundary Logic, removed by synthesis
-        ROM8[1] = 11'sd362;
+        ROM32[0] = 9'sd128;    // Redundary Logic, removed by synthesis
+        ROM32[1] = 9'sd125;
+        ROM32[2] = 9'sd118;
+        ROM32[3] = 9'sd106;
+        ROM32[4] = 9'sd90;
+        ROM32[5] = 9'sd71;
+        ROM32[6] = 9'sd48;
+        ROM32[7] = 9'sd24;
+        ROM16[0] = 9'sd128;    // Redundary Logic, removed by synthesis
+        ROM16[1] = 9'sd118;
+        ROM16[2] = 9'sd90;
+        ROM16[3] = 9'sd48;
+        ROM8[0] = 9'sd128;     // Redundary Logic, removed by synthesis
+        ROM8[1] = 9'sd90;
     end
 
 endmodule
@@ -329,9 +329,9 @@ module FFT_PE #(
             ac_bd = ac - bd;
             ad_bc = ad + bc;
 
-            // 1S 6I 9F x 1S 1I 9F = 1S 8I 18F truncated to 1S 6I 9F 
-            ReResult = ac_bd[`DATA_WIDTH + 9 - 1 -: `DATA_WIDTH];
-            ImResult = ad_bc[`DATA_WIDTH + 9 - 1 -: `DATA_WIDTH];
+            // 1S 6I 7F x 1S 1I 7F = 1S 8I 14F truncated to 1S 6I 7F
+            ReResult = ac_bd[`DATA_WIDTH + `TWIDDLE_FRAC - 1 -: `DATA_WIDTH];
+            ImResult = ad_bc[`DATA_WIDTH + `TWIDDLE_FRAC - 1 -: `DATA_WIDTH];
             complex_mul = {ReResult, ImResult};
         end
     endfunction
