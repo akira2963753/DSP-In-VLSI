@@ -20,11 +20,11 @@
 ## Lab Results
 **All Process of the lab is TSMC 16nm (ADFP).**
 
-| Lab | DSP IP | Area | Clock Frequency |  Report | 
-|:---:|:-------:|:-----:|:---------------:|:------:|
-| 1 | [Sorter](./HW1-Sorter) | 665 µm² | 1 GHz |  [Report](./HW1-Sorter/HW1_Sorter.pdf) | 
-| 2 | [Digital Filter](./HW2-Digital_Filter) | 2943 µm² | 1 GHz | [Report](./HW2-Digital_Filter/HW2_Digital_Filter.pdf) | 
-| 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz|  [Report](./HW3-Interpolator/HW3_Interpolator.pdf)| 
-| 4 | [CORDIC](./HW4-CORDIC) | 1241 µm² | 1 GHz | [Report](./HW4-CORDIC/HW4_CORDIC.pdf)|
-| 5 | [FFT](./HW5-FFT) |  | 1 GHz | [Report](./HW5-FFT/HW5_FFT.pdf)|
+| Lab | DSP IP | Area | Clock Frequency | Report | Grades |
+|:---:|:-------:|:-----:|:---------------:|:------:|:------:|
+| 1 | [Sorter](./HW1-Sorter) | 665 µm² | 1 GHz | [Report](./HW1-Sorter/HW1_Sorter.pdf) | 100 |
+| 2 | [Digital Filter](./HW2-Digital_Filter) | 2943 µm² | 1 GHz | [Report](./HW2-Digital_Filter/HW2_Digital_Filter.pdf) | 195 |
+| 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz | [Report](./HW3-Interpolator/HW3_Interpolator.pdf) | 200 |
+| 4 | [CORDIC](./HW4-CORDIC) | 1241 µm² | 1 GHz | [Report](./HW4-CORDIC/HW4_CORDIC.pdf) | 200 |
+| 5 | [FFT](./HW5-FFT) |  | 1 GHz | [Report](./HW5-FFT/HW5_FFT.pdf) | 200 |
 
