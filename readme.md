@@ -3,7 +3,7 @@
 **Course content for `NTU-ICDA 2026 Spring — DSP In VLSI` Lab & Final Project.**
 - Implements DSP IPs including QRD, FFT, Filters, CORDIC, Interpolator, and Sorter in TSMC 16nm
 - Leverage [**Claude Code Skill**](https://github.com/akira2963753/Gen-Flow-Skill/tree/b23cf35d39efca57c16ab1a9468a70472c95560c) to automate project scaffolding and environment configuration
-- All Design notes: [**Obsidian — Final Project**](https://publish.obsidian.md/marco/Course/DSP+In+VLSI/Project-Note/Final+Project)
+- Design Notes: [**Obsidian - Design Notes**](https://publish.obsidian.md/marco/Course/DSP+In+VLSI/Project-Note/Final+Project)
 
 ---
 
