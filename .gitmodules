@@ -1,3 +1,6 @@
 [submodule "Skill"]
 	path = Skill
 	url = https://github.com/akira2963753/Gen-Flow-Skill.git
+[submodule "Final-EVD"]
+	path = Final-EVD
+	url = https://github.com/akira2963753/Eigen-Value-Decomposition.git
