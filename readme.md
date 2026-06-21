@@ -17,6 +17,14 @@
 
 ---
 
+## Final Project
+
+**3×3 symmetric matrix Eigen-Value Decomposition (EVD)** via iterative QR algorithm with CORDIC systolic array — submodule: [Final-EVD](./Final-EVD) ([GitHub](https://github.com/akira2963753/Eigen-Value-Decomposition)).
+
+| Project | DSP IP | Area | Clock Frequency | Report |
+|:-------:|:------:|:----:|:---------------:|:------:|
+| Final | [EVD](./Final-EVD) | 5078 µm² | ~1.09 GHz | [Report](./Final-EVD/report.pdf) |
+
 ## Lab Results
 **All Process of the lab is TSMC 16nm (ADFP).**
 
@@ -27,12 +35,4 @@
 | 3 | [Interpolator](./HW3-Interpolator) | 4039 µm² | 1.25 GHz | [Report](./HW3-Interpolator/HW3_Interpolator.pdf) | 200/200 |
 | 4 | [CORDIC](./HW4-CORDIC) | 1241 µm² | 1 GHz | [Report](./HW4-CORDIC/HW4_CORDIC.pdf) | 200/200 |
 | 5 | [FFT](./HW5-FFT) | 8618 µm² | 1 GHz | [Report](./HW5-FFT/HW5_FFT.pdf) | 200/200 |
-
-## Final Project
-
-**3×3 symmetric matrix Eigen-Value Decomposition (EVD)** via iterative QR algorithm with CORDIC systolic array — submodule: [Final-EVD](./Final-EVD) ([GitHub](https://github.com/akira2963753/Eigen-Value-Decomposition)).
-
-| Project | DSP IP | Area | Clock Frequency | Report |
-|:-------:|:------:|:----:|:---------------:|:------:|
-| Final | [EVD](./Final-EVD) | 5078 µm² | ~1.09 GHz | [Report](./Final-EVD/report.pdf) |
 
